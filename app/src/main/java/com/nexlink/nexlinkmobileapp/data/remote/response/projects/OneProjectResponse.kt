@@ -14,7 +14,7 @@ data class OneProjectResponse(
 	val status: String? = null
 )
 
-data class Project(
+data class ListProjectItem(
 
 	@field:SerializedName("createdAt")
 	val createdAt: String? = null,
@@ -47,5 +47,5 @@ data class Project(
 data class DataOneProject(
 
 	@field:SerializedName("project")
-	val project: Project? = null
+	val project: ListProjectItem? = null
 )

@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="8dp"
-    android:background="?android:attr/selectableItemBackground"
-    android:gravity="center_vertical">
+    android:background="@drawable/background_item_list_projects"
+    android:elevation="4dp"
+    android:gravity="center_vertical"
+    android:layout_marginBottom="15dp"
+    tools:background="@drawable/background_item_list_projects">
 
-    <ImageView
-        android:id="@+id/iv_project_status"
-        android:layout_width="8dp"
+    <View
+        android:id="@+id/view_project_status"
+        android:layout_width="4dp"
         android:layout_height="match_parent"
         android:layout_marginEnd="8dp"
-        android:backgroundTint="@color/primary_main" />
+        android:background="@drawable/background_shape_list_project"/>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -30,14 +34,28 @@
             android:textSize="16sp"
             android:fontFamily="@font/opensans_bold" />
 
-        <TextView
-            android:id="@+id/tv_project_date"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Wed, 6 Feb 2022"
-            android:textColor="@color/metadata"
-            android:textSize="14sp"
-            android:fontFamily="@font/opensans_regular" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/iv_project_date_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_date_24dp"
+                android:layout_marginEnd="4dp" />
+
+            <TextView
+                android:id="@+id/tv_project_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wed, 6 Feb 2022"
+                android:textColor="@color/metadata"
+                android:textSize="14sp"
+                android:fontFamily="@font/opensans_regular" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -55,12 +73,13 @@
             android:textSize="12sp"
             android:fontFamily="@font/opensans_regular" />
 
-        <ImageView
-            android:id="@+id/iv_teammates"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_teammates"
             android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:src="@drawable/rectangle" />
-
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            tools:listitem="@layout/item_teammates_avatar"/>
     </LinearLayout>
-
 </LinearLayout>

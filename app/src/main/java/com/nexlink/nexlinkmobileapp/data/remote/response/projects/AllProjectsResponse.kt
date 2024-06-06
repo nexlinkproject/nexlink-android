@@ -17,10 +17,10 @@ data class AllProjectsResponse(
 data class DataAllProjects(
 
 	@field:SerializedName("projects")
-	val projects: List<AllProjectsItem?>? = null
+	val projects: List<ListAllProjectsItem?>? = null
 )
 
-data class AllProjectsItem(
+data class ListAllProjectsItem(
 
 	@field:SerializedName("createdAt")
 	val createdAt: String? = null,

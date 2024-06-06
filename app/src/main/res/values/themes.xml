@@ -71,4 +71,12 @@
         <item name="iconGravity">textStart</item>
         <item name="iconPadding">8dp</item>
     </style>
+
+    <!-- Toggle Button Styles -->
+    <style name="Widget.App.ToggleButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="backgroundTint">@color/toggle_button_background</item>
+        <item name="android:textColor">@color/toggle_button_text</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="strokeColor">@color/toggle_button_stroke</item>
+    </style>
 </resources>

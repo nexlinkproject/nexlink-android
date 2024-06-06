@@ -57,39 +57,54 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rv_dates" />
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
+    <!-- Toggle Group for Filtering -->
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/btn_group_project_filter"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tf_search_project_layout"
-        app:tabGravity="fill"
-        app:tabIndicatorColor="@color/primary_main"
-        app:tabMode="fixed"
-        app:tabSelectedTextColor="@color/primary_main"
-        app:tabTextColor="@color/metadata">
+        app:layout_constraintTop_toBottomOf="@id/tf_search_project_layout"
+        app:singleSelection="true">
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_all_project"
+            style="@style/Widget.App.ToggleButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/txt_all_project" />
+            android:layout_weight="1"
+            android:text="All Project" />
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_in_progress"
+            style="@style/Widget.App.ToggleButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/txt_in_progress" />
+            android:layout_weight="1"
+            android:text="In Progress" />
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_done"
+            style="@style/Widget.App.ToggleButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/txt_done" />
+            android:layout_weight="1"
+            android:text="Done" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
-    </com.google.android.material.tabs.TabLayout>
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/primary_main"
+        android:layout_marginHorizontal="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/btn_group_project_filter" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_projects"
+        android:id="@+id/rv_all_projects"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
@@ -99,6 +114,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_group_project_filter" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,13 +1,8 @@
 package com.nexlink.nexlinkmobileapp.view.ui.projects
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.nexlink.nexlinkmobileapp.data.repository.ProjectsRepository
 
-class ProjectsViewModel : ViewModel() {
-
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is projects Fragment"
-    }
-    val text: LiveData<String> = _text
+class ProjectsViewModel(private val repository: ProjectsRepository) : ViewModel() {
+    fun getProjects() = repository.getProjects()
 }
