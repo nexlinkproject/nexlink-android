@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!--  Primary Colors  -->
+    <color name="primary_main">#6246EA</color>
+    <color name="primary_secondary">#8672FF</color>
+    <color name="primary_border">#4E36C8</color>
+    <color name="primary_hover">#4934B3</color>
+    <color name="primary_pressed">#352487</color>
+    <color name="primary_focus">#9A8BFF</color>
+
+    <!--  Danger Colors -->
+    <color name="danger_main">#EA4646</color>
+    <color name="danger_secondary">#FF6F61</color>
+    <color name="danger_border">#E74C3C</color>
+    <color name="danger_hover">#C0392B</color>
+    <color name="danger_pressed">#A93226</color>
+    <color name="danger_focus">#F5B7B1</color>
+
+    <!--  Warning Colors  -->
+    <color name="warning_main">#FFAA00</color>
+    <color name="warning_secondary">#FFBF40</color>
+    <color name="warning_border">#E69900</color>
+    <color name="warning_hover">#CC8F00</color>
+    <color name="warning_pressed">#B37700</color>
+    <color name="warning_focus">#FFD580</color>
+
+    <!--  Info Colors  -->
+    <color name="info_main">#17A2B8</color>
+    <color name="info_secondary">#48C1D4</color>
+    <color name="info_border">#138B99</color>
+    <color name="info_hover">#117A83</color>
+    <color name="info_pressed">#0E6670</color>
+    <color name="info_focus">#80D9E1</color>
+
+    <!--  Success Colors  -->
+    <color name="success_main">#28A745</color>
+    <color name="success_secondary">#5ECB6A</color>
+    <color name="success_border">#238C3B</color>
+    <color name="success_hover">#1E7732</color>
+    <color name="success_pressed">#1A652A</color>
+    <color name="success_focus">#85D997</color>
+
+    <!--  Typography Colors  -->
+    <color name="teks">#333333</color>
+    <color name="paragraf">#4F4F4F</color>
+    <color name="headline">#212121</color>
+    <color name="subheadline">#424242</color>
+    <color name="caption">#666666</color>
+    <color name="metadata">#999999</color>
+    <color name="link">#6246EA</color>
+    <color name="link_hover">#8672FF</color>
+    <color name="link_visited">#4934B3</color>
+    <color name="highlight">#8672FF</color>
+</resources>
