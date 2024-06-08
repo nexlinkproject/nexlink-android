@@ -1,23 +1,16 @@
 package com.nexlink.nexlinkmobileapp.view.ui.projects
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.core.app.ActivityOptionsCompat
-import androidx.core.util.Pair
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.nexlink.nexlinkmobileapp.R
 import com.nexlink.nexlinkmobileapp.data.ResultState
 import com.nexlink.nexlinkmobileapp.data.remote.response.projects.ListAllProjectsItem
 import com.nexlink.nexlinkmobileapp.databinding.FragmentProjectsBinding
@@ -30,7 +23,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class ProjectsFragment : Fragment() {
+class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
 
     private val projectsViewModel by viewModels<ProjectsViewModel> {
         ProjectsModelFactory.getInstance(requireContext())
@@ -52,7 +45,7 @@ class ProjectsFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
         val dates = getDatesOfMonth()
-        val adapter = DateAdapter(dates)
+        val adapter = DateAdapter(dates, this)
         recyclerView.adapter = adapter
 
         binding.btnAddProject.setOnClickListener {
@@ -62,6 +55,15 @@ class ProjectsFragment : Fragment() {
 
         // Toggle buttons untuk langsung menampilkan semua project
         binding.btnGroupProjectFilter.check(binding.btnAllProject.id)
+        binding.btnGroupProjectFilter.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (isChecked) {
+                when (checkedId) {
+                    binding.btnAllProject.id -> filterProjects("all")
+                    binding.btnInProgress.id -> filterProjects("in_progress")
+                    binding.btnDone.id -> filterProjects("done")
+                }
+            }
+        }
 
         // Menampilkan semua project
         val layoutManager = LinearLayoutManager(requireContext())
@@ -69,6 +71,7 @@ class ProjectsFragment : Fragment() {
         val itemDecoration = DividerItemDecoration(requireContext(), layoutManager.orientation)
         binding.rvAllProjects.addItemDecoration(itemDecoration)
 
+        // Mengambil data project
         getAllProjects()
 
         return root
@@ -108,6 +111,7 @@ class ProjectsFragment : Fragment() {
                 is ResultState.Error -> {
                     showLoading(false)
                     val message = result.error
+                    println(message)
                     showToast(message)
                 }
             }
@@ -129,6 +133,15 @@ class ProjectsFragment : Fragment() {
                 )
             }
         })
+    }
+
+    private fun filterProjects(filter: String, date: Date? = null) {
+        showToast("Filter $filter clicked")
+    }
+
+    override fun onDateClick(date: Date) {
+        showToast("Date ${SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date)} clicked")
+//        filterProjects("all", date)
     }
 
     private fun showSelectedProject(story: ListAllProjectsItem, viewHolder: RecyclerView.ViewHolder) {

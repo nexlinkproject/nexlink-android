@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.nexlink.nexlinkmobileapp.data.remote.response.projects.ListAllProjectsItem
 import com.nexlink.nexlinkmobileapp.databinding.ItemListProjectBinding
+import com.nexlink.nexlinkmobileapp.view.utils.formatDate
 
 class ProjectsAdapter :
     ListAdapter<ListAllProjectsItem, ProjectsAdapter.MyViewHolder>(DIFF_CALLBACK) {
@@ -33,11 +34,7 @@ class ProjectsAdapter :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(project: ListAllProjectsItem) {
             binding.tvProjectName.text = "${project.name}"
-//            binding.tvTitle.text = "${story.name}"
-//            binding.tvDescription.text = "${story.description}"
-//            Glide.with(this.itemView.context)
-//                .load(story.photoUrl)
-//                .into(binding.ivPhoto)
+            binding.tvProjectDate.text = formatDate(project.endDate.toString())
         }
     }
 

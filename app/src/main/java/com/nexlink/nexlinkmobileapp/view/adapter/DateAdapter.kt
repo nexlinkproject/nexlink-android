@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class DateAdapter(private val dates: List<Date>) :
+class DateAdapter(private val dates: List<Date>, private val onDateClickListener: OnDateClickListener) :
     RecyclerView.Adapter<DateAdapter.DateViewHolder>() {
 
     private val dayFormat = SimpleDateFormat("EEE", Locale.getDefault())
@@ -52,6 +52,8 @@ class DateAdapter(private val dates: List<Date>) :
                 notifyItemChanged(previousPosition)
             }
             notifyItemChanged(currentPosition)
+
+            onDateClickListener.onDateClick(date)
         }
     }
 
@@ -65,5 +67,9 @@ class DateAdapter(private val dates: List<Date>) :
             textDay.text = dayFormat.format(date).uppercase(Locale.getDefault())
             textDate.text = dateFormat.format(date)
         }
+    }
+
+    interface OnDateClickListener {
+        fun onDateClick(date: Date)
     }
 }
