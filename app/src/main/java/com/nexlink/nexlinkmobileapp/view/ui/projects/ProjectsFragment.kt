@@ -58,9 +58,9 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
         binding.btnGroupProjectFilter.addOnButtonCheckedListener { group, checkedId, isChecked ->
             if (isChecked) {
                 when (checkedId) {
-                    binding.btnAllProject.id -> filterProjects("all")
-                    binding.btnInProgress.id -> filterProjects("in_progress")
-                    binding.btnDone.id -> filterProjects("done")
+                    binding.btnAllProject.id -> getAllProjects()
+                    binding.btnInProgress.id -> filterProjects("active")
+                    binding.btnDone.id -> filterProjects("completed")
                 }
             }
         }
@@ -95,8 +95,8 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
         return dates
     }
 
-    private fun getAllProjects(){
-        projectsViewModel.getProjects().observe(viewLifecycleOwner) { result ->
+    private fun getAllProjects(status: String? = null){
+        projectsViewModel.getProjects(status).observe(viewLifecycleOwner) { result ->
             when (result) {
                 is ResultState.Loading -> {
                     showLoading(true)
@@ -136,7 +136,8 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
     }
 
     private fun filterProjects(filter: String, date: Date? = null) {
-        showToast("Filter $filter clicked")
+        getAllProjects(filter)
+//        showToast("Filter $filter clicked")
     }
 
     override fun onDateClick(date: Date) {

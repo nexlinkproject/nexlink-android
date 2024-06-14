@@ -1,15 +1,20 @@
 package com.nexlink.nexlinkmobileapp.view.ui.profile
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import com.nexlink.nexlinkmobileapp.databinding.FragmentProfileBinding
+import com.nexlink.nexlinkmobileapp.view.factory.AuthModelFactory
 
 class ProfileFragment : Fragment() {
+
+    private val profileViewModel by viewModels<ProfileViewModel> {
+        AuthModelFactory.getInstance(requireContext())
+    }
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
@@ -17,18 +22,24 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-        val profileViewModel =
-            ViewModelProvider(this).get(ProfileViewModel::class.java)
-
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textProfile
-        profileViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        profileViewModel.getSession().observe(viewLifecycleOwner) { user ->
+            binding.tvProfileName.text = user.fullName
         }
+
+        binding.btnProfile.setOnClickListener {
+            val intent = Intent(requireContext(), EditProfileActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.btnLogout.setOnClickListener {
+            profileViewModel.logout()
+        }
+
         return root
     }
 

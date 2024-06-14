@@ -1,20 +1,25 @@
 package com.nexlink.nexlinkmobileapp.view.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.ViewCompat
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.nexlink.nexlinkmobileapp.R
 import com.nexlink.nexlinkmobileapp.databinding.ActivityMainBinding
+import com.nexlink.nexlinkmobileapp.view.factory.AuthModelFactory
+import com.nexlink.nexlinkmobileapp.view.ui.auth.login.LoginActivity
 
 class MainActivity : AppCompatActivity() {
+
+    private val authViewModel by viewModels<MainViewModel> {
+        AuthModelFactory.getInstance(this)
+    }
 
     private lateinit var binding: ActivityMainBinding
 
@@ -24,6 +29,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        authViewModel.getSession().observe(this) { user ->
+            if (!user.isLogin) {
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            }
+        }
+
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         val toolbar: Toolbar = binding.toolbar
@@ -32,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         // Update toolbar menu untuk setiap fragment dan menentukan menu dan title
         navController.addOnDestinationChangedListener { _, destination, _ ->
             toolbar.title = destination.label
-            if (destination.id == R.id.navigation_home) {
+            if (destination.id == R.id.navigation_home || destination.id == R.id.navigation_profile) {
                 toolbar.visibility = View.GONE
             } else {
                 toolbar.visibility = View.VISIBLE

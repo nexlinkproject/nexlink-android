@@ -8,7 +8,7 @@ import java.util.Date
 import java.util.Locale
 
 class ProjectsViewModel(private val repository: ProjectsRepository) : ViewModel() {
-    fun getProjects() = repository.getProjects()
+    fun getProjects(status: String? = null) = repository.getProjects(status)
 
     fun filterProjectsByDate(
         projects: List<ListAllProjectsItem?>,

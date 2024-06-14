@@ -87,11 +87,57 @@
         <item name="backgroundTint">@color/info_main</item>
     </style>
 
+    <style name="Widget.App.Button.Login" parent="Widget.App.Button">
+        <item name="iconGravity">textStart</item>
+        <item name="iconEndPadding">8dp</item>
+        <item name="icon">@drawable/ic_log_in</item>
+        <item name="iconTint">@color/primary_main</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/primary_main</item>
+    </style>
+
+    <style name="Widget.App.Button.SignUp" parent="Widget.App.Button">
+        <item name="iconGravity">textStart</item>
+        <item name="iconEndPadding">8dp</item>
+        <item name="icon">@drawable/ic_user_plus</item>
+        <item name="iconTint">@color/primary_main</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/primary_main</item>
+    </style>
+
+    <style name="Widget.App.Button.LoginGoogle" parent="Widget.App.Button">
+        <item name="iconGravity">textStart</item>
+        <item name="iconEndPadding">8dp</item>
+        <item name="icon">@drawable/ic_google</item>
+        <item name="iconTint">@color/primary_main</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/primary_main</item>
+    </style>
+
+    <style name="Widget.App.Button.Profile" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="iconTint">@color/primary_main</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">8dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/primary_main</item>
+    </style>
+
+
     <!-- Toggle Button Styles -->
     <style name="Widget.App.ToggleButton" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="backgroundTint">@color/toggle_button_background</item>
         <item name="android:textColor">@color/toggle_button_text</item>
         <item name="strokeWidth">2dp</item>
         <item name="strokeColor">@color/toggle_button_stroke</item>
+    </style>
+
+    <!-- Circle ImageView Style -->
+    <style name="CircleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
     </style>
 </resources>

@@ -28,4 +28,21 @@
     <string name="txt_description">Description</string>
     <string name="txt_project_detail">Project Detail</string>
     <string name="txt_deadline">Deadline</string>
+    <string name="txt_welcome">Welcome</string>
+    <string name="txt_sign_up">Sign Up</string>
+    <string name="txt_login_with_google">Login With Google</string>
+    <string name="txt_login">Login</string>
+    <string name="txt_password">Password</string>
+    <string name="txt_email">Email</string>
+    <string name="len_password">Password must be at least 8 characters long</string>
+    <string name="txt_name">Name</string>
+    <string name="txt_fulle_name">Full Name</string>
+    <string name="txt_sign_up_with_google">Sign Up With Google</string>
+    <string name="alert_login_success">You have successfully logged in</string>
+    <string name="wrong_email_and_password">Incorrect email or password.</string>
+    <string name="txt_profile">Profile</string>
+    <string name="txt_setting">Setting</string>
+    <string name="txt_logout">Logout</string>
+    <string name="txt_update">Update</string>
+    <string name="alert_signup_success">Your account has been created. Please login to continue.</string>
 </resources>

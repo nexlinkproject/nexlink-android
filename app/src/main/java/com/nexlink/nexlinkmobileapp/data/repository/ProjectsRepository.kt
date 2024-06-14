@@ -9,11 +9,11 @@ import com.nexlink.nexlinkmobileapp.data.remote.retrofit.ApiService
 class ProjectsRepository private constructor(
     private val projectsApiService: ApiService,
 ) {
-    fun getProjects() = liveData {
+    fun getProjects(status: String? = null) = liveData {
         emit(ResultState.Loading)
 
         try {
-            val successResponse = projectsApiService.getProjects()
+            val successResponse = projectsApiService.getProjects(status)
             emit(ResultState.Success(successResponse))
         } catch (e: Exception) {
             emit(ResultState.Error(e.message.toString()))
