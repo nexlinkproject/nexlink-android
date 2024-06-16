@@ -1,6 +1,5 @@
 package com.nexlink.nexlinkmobileapp.data.repository
 
-import android.util.Log
 import androidx.lifecycle.liveData
 import com.nexlink.nexlinkmobileapp.data.ResultState
 import com.nexlink.nexlinkmobileapp.data.remote.request.projects.CreateProjectRequest
@@ -14,6 +13,28 @@ class ProjectsRepository private constructor(
 
         try {
             val successResponse = projectsApiService.getProjects(status)
+            emit(ResultState.Success(successResponse))
+        } catch (e: Exception) {
+            emit(ResultState.Error(e.message.toString()))
+        }
+    }
+
+    fun getProjecUsers(projectId: String) = liveData {
+        emit(ResultState.Loading)
+
+        try {
+            val successResponse = projectsApiService.getProjectUsers(projectId)
+            emit(ResultState.Success(successResponse))
+        } catch (e: Exception) {
+            emit(ResultState.Error(e.message.toString()))
+        }
+    }
+
+    fun getProjectTasks(projectId: String) = liveData {
+        emit(ResultState.Loading)
+
+        try {
+            val successResponse = projectsApiService.getProjectTasks(projectId)
             emit(ResultState.Success(successResponse))
         } catch (e: Exception) {
             emit(ResultState.Error(e.message.toString()))
@@ -41,6 +62,17 @@ class ProjectsRepository private constructor(
             )
 
             val successResponse = projectsApiService.createProjects(projectRequest)
+            emit(ResultState.Success(successResponse))
+        } catch (e: Exception) {
+            emit(ResultState.Error(e.message.toString()))
+        }
+    }
+
+    fun deleteProject(projectId: String) = liveData {
+        emit(ResultState.Loading)
+
+        try {
+            val successResponse = projectsApiService.deleteProject(projectId)
             emit(ResultState.Success(successResponse))
         } catch (e: Exception) {
             emit(ResultState.Error(e.message.toString()))

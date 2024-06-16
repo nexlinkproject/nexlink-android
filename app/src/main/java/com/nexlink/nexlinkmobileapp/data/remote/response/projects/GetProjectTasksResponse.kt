@@ -1,26 +1,26 @@
-package com.nexlink.nexlinkmobileapp.data.remote.response.tasks
+package com.nexlink.nexlinkmobileapp.data.remote.response.projects
 
 import com.google.gson.annotations.SerializedName
 
-data class AllTasksResponse(
+data class GetProjectTasksResponse(
 
-    @field:SerializedName("data")
-	val data: DataAllTasks? = null,
+	@field:SerializedName("data")
+	val data: DataProjectTasks? = null,
 
-    @field:SerializedName("message")
+	@field:SerializedName("message")
 	val message: String? = null,
 
-    @field:SerializedName("status")
+	@field:SerializedName("status")
 	val status: String? = null
 )
 
-data class DataAllTasks(
+data class DataProjectTasks(
 
 	@field:SerializedName("tasks")
-	val tasks: List<ListAllTasksItem?>? = null
+	val tasks: List<ListProjectTasksItem?>? = null
 )
 
-data class ListAllTasksItem(
+data class ListProjectTasksItem(
 
 	@field:SerializedName("createdAt")
 	val createdAt: String? = null,
@@ -28,23 +28,23 @@ data class ListAllTasksItem(
 	@field:SerializedName("endDate")
 	val endDate: String? = null,
 
-	@field:SerializedName("ProjectId")
-	val projectId: Int? = null,
+	@field:SerializedName("name")
+	val name: String? = null,
 
 	@field:SerializedName("description")
 	val description: String? = null,
 
 	@field:SerializedName("id")
-	val id: Int? = null,
+	val id: String? = null,
 
-	@field:SerializedName("title")
-	val title: String? = null,
+	@field:SerializedName("deadline")
+	val deadline: Any? = null,
+
+	@field:SerializedName("projectId")
+	val projectId: String? = null,
 
 	@field:SerializedName("startDate")
 	val startDate: String? = null,
-
-	@field:SerializedName("assignedTo")
-	val assignedTo: Any? = null,
 
 	@field:SerializedName("status")
 	val status: String? = null,

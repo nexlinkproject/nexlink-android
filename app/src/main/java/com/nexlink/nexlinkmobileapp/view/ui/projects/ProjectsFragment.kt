@@ -18,6 +18,7 @@ import com.nexlink.nexlinkmobileapp.view.adapter.DateAdapter
 import com.nexlink.nexlinkmobileapp.view.adapter.ProjectsAdapter
 import com.nexlink.nexlinkmobileapp.view.factory.ProjectsModelFactory
 import com.nexlink.nexlinkmobileapp.view.ui.projects.crud.CreateProjectActivity
+import com.nexlink.nexlinkmobileapp.view.ui.projects.crud.DetailProjectActivity
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -65,6 +66,12 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
             }
         }
 
+        // Retry button
+        binding.btnRetry.setOnClickListener {
+            showTimeout(false)
+            getAllProjects()
+        }
+
         // Menampilkan semua project
         val layoutManager = LinearLayoutManager(requireContext())
         binding.rvAllProjects.layoutManager = layoutManager
@@ -72,9 +79,15 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
         binding.rvAllProjects.addItemDecoration(itemDecoration)
 
         // Mengambil data project
-        getAllProjects()
+//        getAllProjects()
 
         return root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.btnGroupProjectFilter.check(binding.btnAllProject.id)
+        getAllProjects()
     }
 
     private fun getDatesOfMonth(): List<Date> {
@@ -104,15 +117,17 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
 
                 is ResultState.Success -> {
                     showLoading(false)
+                    showTimeout(false)
                     val stories = result.data.data?.projects
                     setProjectsData(stories)
                 }
 
                 is ResultState.Error -> {
                     showLoading(false)
-                    val message = result.error
-                    println(message)
-                    showToast(message)
+                    showTimeout(true)
+//                    val message = result.error
+//                    showToast(message)
+                    showToast("Please check your internet connection")
                 }
             }
         }
@@ -137,7 +152,6 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
 
     private fun filterProjects(filter: String, date: Date? = null) {
         getAllProjects(filter)
-//        showToast("Filter $filter clicked")
     }
 
     override fun onDateClick(date: Date) {
@@ -146,7 +160,19 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
     }
 
     private fun showSelectedProject(story: ListAllProjectsItem, viewHolder: RecyclerView.ViewHolder) {
-        showToast("Project ${story.name} clicked")
+        val detailProjectIntent = Intent(requireContext(), DetailProjectActivity::class.java).apply {
+            putExtra(DetailProjectActivity.EXTRA_PROJECT_ID, story.id)
+            putExtra(DetailProjectActivity.EXTRA_PROJECT_NAME, story.name)
+            putExtra(DetailProjectActivity.EXTRA_PROJECT_DESCRIPTION, story.description)
+            putExtra(DetailProjectActivity.EXTRA_PROJECT_START_DATE, story.startDate)
+            putExtra(DetailProjectActivity.EXTRA_PROJECT_END_DATE, story.endDate)
+        }
+        startActivity(detailProjectIntent)
+    }
+
+    private fun showTimeout(isTimeout: Boolean) {
+        binding.rvAllProjects.visibility = if (isTimeout) View.GONE else View.VISIBLE
+        binding.timeoutLayout.visibility = if (isTimeout) View.VISIBLE else View.GONE
     }
 
     private fun showLoading(isLoading: Boolean) {

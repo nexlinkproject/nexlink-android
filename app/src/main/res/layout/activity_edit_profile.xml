@@ -19,8 +19,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/ToolbarStyle"
-            app:navigationIcon="@drawable/ic_arrow_left_24dp"
-            app:title="@string/title_appbar" />
+            app:navigationIcon="@drawable/ic_arrow_left_24dp">
+
+            <TextView
+                style="@style/ToolbarTitleStyle"
+                android:text="@string/txt_edit_profile" />
+
+        </androidx.appcompat.widget.Toolbar>
 
         <View
             android:layout_width="match_parent"

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/background_all_rounded"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/tv_task_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Task Name"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:fontFamily="@font/opensans_bold" />
+
+    <TextView
+        android:id="@+id/tv_task_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_task_name"
+        android:layout_marginTop="4dp"
+        android:text="Ongoing"
+        android:textColor="@color/paragraf"
+        android:textSize="14sp"
+        android:fontFamily="@font/opensans_regular" />
+
+    <TextView
+        android:id="@+id/tv_task_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_task_status"
+        android:layout_marginTop="2dp"
+        android:text="30 Jan 2099"
+        android:textColor="@color/paragraf"
+        android:textSize="14sp"
+        android:fontFamily="@font/opensans_regular" />
+
+    <LinearLayout
+        android:id="@+id/ll_task_members"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/img_rectangle"
+            android:scaleType="centerCrop"
+            android:background="@drawable/background_circle"
+            android:padding="2dp"/>
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/img_rectangle"
+            android:scaleType="centerCrop"
+            android:background="@drawable/background_circle"
+            android:padding="2dp" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/img_rectangle"
+            android:scaleType="centerCrop"
+            android:background="@drawable/background_circle"
+            android:padding="2dp" />
+    </LinearLayout>
+</RelativeLayout>

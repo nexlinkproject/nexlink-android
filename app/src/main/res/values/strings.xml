@@ -45,4 +45,14 @@
     <string name="txt_logout">Logout</string>
     <string name="txt_update">Update</string>
     <string name="alert_signup_success">Your account has been created. Please login to continue.</string>
+    <string name="txt_edit_project">Edit Project</string>
+    <string name="txt_delete_project">Delete Project</string>
+    <string name="txt_task_have_not_been_added_yet">Task have not been added yet</string>
+    <string name="txt_teammates_have_not_been_added_yet">Teammates have not been added yet</string>
+    <string name="txt_project_name">Project Name</string>
+    <string name="txt_add_project">Add Project</string>
+    <string name="txt_edit_profile">Edit Profile</string>
+    <string name="txt_add_teammates_and_task">Add Teammates and Task</string>
+    <string name="txt_timeout_message">Request Timeout. Please try again.</string>
+    <string name="txt_retry">Retry</string>
 </resources>

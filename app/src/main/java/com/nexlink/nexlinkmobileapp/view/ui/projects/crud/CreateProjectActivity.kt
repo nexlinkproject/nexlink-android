@@ -31,9 +31,10 @@ class CreateProjectActivity : AppCompatActivity() {
         binding = ActivityCreateProjectBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Set up toolbar
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Add Project"
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         binding.toolbar.setNavigationOnClickListener {
             onBackPressed()
@@ -86,34 +87,41 @@ class CreateProjectActivity : AppCompatActivity() {
         }
 
         projectsViewModel.createProject(name, description, status, startDate, endDate, deadline).observe(this) { result ->
-            if (result != null) {
-                when (result) {
-                    is ResultState.Loading -> showLoading(true)
+            when (result) {
+                is ResultState.Loading -> showLoading(true)
 
-                    is ResultState.Success -> {
-                        showLoading(false)
-                        AlertDialog.Builder(this).apply {
-                            setTitle("Save Project")
-                            setMessage("Project $name has been saved. Let's add teammates and tasks.")
-                            setPositiveButton("Next") { _, _ ->
-                                val intent = Intent(this@CreateProjectActivity, AddTeammatesAndTaskActivity::class.java)
-                                startActivity(intent)
+                is ResultState.Success -> {
+                    showLoading(false)
+                    AlertDialog.Builder(this).apply {
+                        setTitle("Save Project")
+                        setMessage("Project $name has been saved. Let's add teammates and tasks.")
+                        setPositiveButton("Next") { _, _ ->
+                            val project = result.data.data?.project
+                            if (project != null) {
+                                val detailProjectIntent = Intent(this@CreateProjectActivity, AddTeammatesAndTaskActivity::class.java).apply {
+                                    putExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_ID, project.id)
+                                    putExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_NAME, project.name)
+                                    putExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_DESCRIPTION, project.description)
+                                    putExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_START_DATE, project.startDate)
+                                    putExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_END_DATE, project.endDate)
+                                }
+                                startActivity(detailProjectIntent)
                                 finish()
                             }
-                            create()
-                            show()
                         }
+                        create()
+                        show()
                     }
+                }
 
-                    is ResultState.Error -> {
-                        showLoading(false)
-                        AlertDialog.Builder(this).apply {
-                            setTitle("Error")
-                            setMessage("Failed to save project: ${result.error}")
-                            setPositiveButton("OK", null)
-                            create()
-                            show()
-                        }
+                is ResultState.Error -> {
+                    showLoading(false)
+                    AlertDialog.Builder(this).apply {
+                        setTitle("Error")
+                        setMessage("Failed to save project: ${result.error}")
+                        setPositiveButton("OK", null)
+                        create()
+                        show()
                     }
                 }
             }

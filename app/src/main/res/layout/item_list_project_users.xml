@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/background_all_rounded"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/iv_teammate_avatar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/img_rectangle"
+        android:scaleType="centerCrop"
+        android:background="@drawable/background_circle"
+        android:padding="2dp" />
+
+    <TextView
+        android:id="@+id/tv_teammate_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="Teammate Name"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:fontFamily="@font/opensans_regular" />
+</LinearLayout>

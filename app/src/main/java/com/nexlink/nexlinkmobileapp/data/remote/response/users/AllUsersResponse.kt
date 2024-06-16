@@ -14,7 +14,7 @@ data class AllUsersResponse(
 	val status: String? = null,
 )
 
-data class AllUsersItem(
+data class ListAllUsersItem(
 
 	@field:SerializedName("createdAt")
 	val createdAt: String? = null,
@@ -47,5 +47,5 @@ data class AllUsersItem(
 data class DataAllUsers(
 
 	@field:SerializedName("users")
-	val users: List<AllUsersItem?>? = null,
+	val users: List<ListAllUsersItem?>? = null,
 )

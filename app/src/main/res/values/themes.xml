@@ -17,10 +17,19 @@
         <item name="android:fontFamily">@font/opensans_regular</item>
     </style>
 
-    <!-- App Bar Style  -->
+    <!-- Toolbar Style  -->
     <style name="ToolbarStyle" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:textColorPrimary">@color/primary_main</item>
         <item name="android:background">@color/white</item>
+        <item name="android:fontFamily">@font/opensans_semibold</item>
+    </style>
+
+    <style name="ToolbarTitleStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:fontFamily">@font/opensans_semibold</item>
     </style>
 
@@ -63,6 +72,7 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:fontFamily">@font/opensans_bold</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="Widget.App.Button.WithIcon.AddButton" parent="Widget.App.Button">
@@ -85,6 +95,14 @@
         <item name="iconGravity">textStart</item>
         <item name="iconPadding">8dp</item>
         <item name="backgroundTint">@color/info_main</item>
+    </style>
+
+    <style name="Widget.App.Button.WithIcon.Delete" parent="Widget.App.Button">
+        <item name="icon">@drawable/ic_x_circle</item>
+        <item name="iconTint">@color/white</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">8dp</item>
+        <item name="backgroundTint">@color/danger_main</item>
     </style>
 
     <style name="Widget.App.Button.Login" parent="Widget.App.Button">
@@ -125,6 +143,8 @@
         <item name="strokeWidth">1dp</item>
         <item name="strokeColor">@color/primary_main</item>
     </style>
+
+
 
 
     <!-- Toggle Button Styles -->

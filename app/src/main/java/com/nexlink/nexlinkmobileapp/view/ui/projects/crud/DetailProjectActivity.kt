@@ -1,22 +1,32 @@
 package com.nexlink.nexlinkmobileapp.view.ui.projects.crud
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide
+import com.nexlink.nexlinkmobileapp.R
 import com.nexlink.nexlinkmobileapp.data.ResultState
-import com.nexlink.nexlinkmobileapp.databinding.ActivityAddTeammatesAndTaskBinding
+import com.nexlink.nexlinkmobileapp.databinding.ActivityDetailProjectBinding
 import com.nexlink.nexlinkmobileapp.view.adapter.ProjectTasksAdapter
 import com.nexlink.nexlinkmobileapp.view.adapter.ProjectUsersAdapter
+import com.nexlink.nexlinkmobileapp.view.adapter.TasksAdapter
+import com.nexlink.nexlinkmobileapp.view.adapter.UsersAdapter
 import com.nexlink.nexlinkmobileapp.view.factory.ProjectsModelFactory
 import com.nexlink.nexlinkmobileapp.view.ui.projects.ProjectsViewModel
 import com.nexlink.nexlinkmobileapp.view.utils.formatDate
 
-class AddTeammatesAndTaskActivity : AppCompatActivity() {
+class DetailProjectActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityAddTeammatesAndTaskBinding
+    private lateinit var binding: ActivityDetailProjectBinding
 
     private lateinit var projectUsersAdapter: ProjectUsersAdapter
     private lateinit var tasksAdapter: ProjectTasksAdapter
@@ -32,10 +42,9 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        binding = ActivityAddTeammatesAndTaskBinding.inflate(layoutInflater)
+        binding = ActivityDetailProjectBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Set up toolbar
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -45,20 +54,19 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
         }
 
         // Set up buttons click listeners
-        binding.btnAddTeammate.setOnClickListener {
-            println("Add teammate")
+        binding.btnEditProject.setOnClickListener {
+            val detailProjectIntent = Intent(this@DetailProjectActivity, AddTeammatesAndTaskActivity::class.java).apply {
+                putExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_ID, intent.getStringExtra(EXTRA_PROJECT_ID))
+                putExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_NAME, intent.getStringExtra(EXTRA_PROJECT_NAME))
+                putExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_DESCRIPTION, intent.getStringExtra(EXTRA_PROJECT_DESCRIPTION))
+                putExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_START_DATE, intent.getStringExtra(EXTRA_PROJECT_START_DATE))
+                putExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_END_DATE, intent.getStringExtra(EXTRA_PROJECT_END_DATE))
+            }
+            startActivity(detailProjectIntent)
         }
 
-        binding.btnAddTask.setOnClickListener {
-            println("Add task")
-        }
-
-        binding.btnGenerateMl.setOnClickListener {
-            println("Generate ML")
-        }
-
-        binding.btnSubmit.setOnClickListener {
-            println("Submit")
+        binding.btnDeleteProject.setOnClickListener {
+            showDeleteConfirmationDialog()
         }
 
         setupRecyclerViews()
@@ -74,19 +82,19 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
     }
 
     private fun setupDataDetailProject() {
-        val projectName = intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_NAME)
-        val projectDescription = intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_DESCRIPTION)
+        val projectName = intent.getStringExtra(EXTRA_PROJECT_NAME)
+        val projectDescription = intent.getStringExtra(EXTRA_PROJECT_DESCRIPTION)
 
         val projectStartDate =
-            formatDate(intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_START_DATE).toString())
-        val projectEndDate = formatDate(intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_END_DATE).toString())
+            formatDate(intent.getStringExtra(EXTRA_PROJECT_START_DATE).toString())
+        val projectEndDate = formatDate(intent.getStringExtra(EXTRA_PROJECT_END_DATE).toString())
         val projectDate = "$projectStartDate - $projectEndDate"
 
         binding.tvProjectName.text = projectName
         binding.tvDescription.text = projectDescription
         binding.tvDeadline.text = projectDate
 
-        val projectId = intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_ID)
+        val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
         if (projectId != null) {
             isTeammatesLoading = true
             isTasksLoading = true
@@ -95,6 +103,7 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
             loadTeammates(projectId)
             loadTasks(projectId)
         }
+
     }
 
     private fun loadTeammates(projectId: String) {
@@ -158,6 +167,38 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
     private fun checkIfDataLoaded() {
         if (!isTeammatesLoading && !isTasksLoading) {
             showLoading(false)
+        }
+    }
+
+    private fun showDeleteConfirmationDialog() {
+        AlertDialog.Builder(this).apply {
+            setTitle("Delete Project")
+            setMessage("Are you sure you want to delete this project?")
+            setPositiveButton("Yes") { _, _ ->
+                deleteProject()
+            }
+            setNegativeButton("No", null)
+            create()
+            show()
+        }
+    }
+
+    private fun deleteProject() {
+        val projectId = intent.getStringExtra(EXTRA_PROJECT_ID).orEmpty()
+        projectsViewModel.deleteProject(projectId).observe(this) { result ->
+            when (result) {
+                is ResultState.Loading -> showLoading(true)
+                is ResultState.Success -> {
+                    showLoading(false)
+                    showToast(result.data.message.toString())
+                    finish()
+                }
+
+                is ResultState.Error -> {
+                    showLoading(false)
+                    showToast("Failed to delete project: ${result.error}")
+                }
+            }
         }
     }
 

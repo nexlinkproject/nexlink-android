@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.ui.projects.crud.AddTeammatesAndTaskActivity">
+    tools:context=".view.ui.projects.crud.DetailProjectActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarlayout"
@@ -23,7 +23,7 @@
 
             <TextView
                 style="@style/ToolbarTitleStyle"
-                android:text="@string/txt_add_teammates_and_task"/>
+                android:text="@string/txt_project_detail" />
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -46,23 +46,14 @@
 
             <!-- Project Detail Section -->
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="@font/opensans_bold"
-                android:text="@string/txt_project_detail"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
-
-            <TextView
                 android:id="@+id/tv_project_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:fontFamily="@font/opensans_semibold"
+                android:fontFamily="@font/opensans_bold"
                 android:text="@string/txt_project_name"
                 android:textColor="@color/primary_main"
-                android:textSize="16sp" />
+                android:textSize="28sp" />
 
             <TextView
                 android:id="@+id/tv_description"
@@ -125,13 +116,6 @@
                     android:text="@string/txt_teammates"
                     android:textColor="@color/black"
                     android:textSize="20sp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_add_teammate"
-                    style="@style/Widget.App.Button.WithIcon.AddButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/add" />
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -171,13 +155,6 @@
                     android:text="@string/txt_task"
                     android:textColor="@color/black"
                     android:textSize="20sp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_add_task"
-                    style="@style/Widget.App.Button.WithIcon.AddButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/add" />
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -203,19 +180,20 @@
 
             <!-- Action Buttons -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_generate_ml"
-                style="@style/Widget.App.Button.WithIcon.GenerateML"
+                android:id="@+id/btn_edit_project"
+                style="@style/Widget.App.Button.WithIcon.Save"
+                android:layout_width="match_parent"
+                android:layout_marginTop="16dp"
+                android:text="@string/txt_edit_project" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_delete_project"
+                style="@style/Widget.App.Button.WithIcon.Delete"
                 android:layout_width="match_parent"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
-                android:text="AI Generate" />
+                android:text="@string/txt_delete_project" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_submit"
-                style="@style/Widget.App.Button.WithIcon.Save"
-                android:layout_width="match_parent"
-                android:layout_marginBottom="16dp"
-                android:text="Submit" />
         </LinearLayout>
     </ScrollView>
 
