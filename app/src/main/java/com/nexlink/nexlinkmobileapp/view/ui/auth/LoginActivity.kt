@@ -1,4 +1,4 @@
-package com.nexlink.nexlinkmobileapp.view.ui.auth.login
+package com.nexlink.nexlinkmobileapp.view.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
@@ -15,12 +15,11 @@ import com.nexlink.nexlinkmobileapp.data.ResultState
 import com.nexlink.nexlinkmobileapp.data.local.pref.UserModel
 import com.nexlink.nexlinkmobileapp.databinding.ActivityLoginBinding
 import com.nexlink.nexlinkmobileapp.view.factory.AuthModelFactory
-import com.nexlink.nexlinkmobileapp.view.ui.auth.signup.SignUpActivity
 import com.nexlink.nexlinkmobileapp.view.ui.main.MainActivity
 
 class LoginActivity : AppCompatActivity() {
 
-    private val loginViewModel by viewModels<LoginViewModel> {
+    private val loginViewModel by viewModels<AuthViewModel> {
         AuthModelFactory.getInstance(this)
     }
     private lateinit var binding: ActivityLoginBinding

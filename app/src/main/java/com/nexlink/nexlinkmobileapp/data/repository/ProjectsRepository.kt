@@ -19,6 +19,17 @@ class ProjectsRepository private constructor(
         }
     }
 
+    fun getProjectById(projectId: String) = liveData {
+        emit(ResultState.Loading)
+
+        try {
+            val successResponse = projectsApiService.getProjectById(projectId)
+            emit(ResultState.Success(successResponse))
+        } catch (e: Exception) {
+            emit(ResultState.Error(e.message.toString()))
+        }
+    }
+
     fun getProjecUsers(projectId: String) = liveData {
         emit(ResultState.Loading)
 
@@ -62,6 +73,34 @@ class ProjectsRepository private constructor(
             )
 
             val successResponse = projectsApiService.createProjects(projectRequest)
+            emit(ResultState.Success(successResponse))
+        } catch (e: Exception) {
+            emit(ResultState.Error(e.message.toString()))
+        }
+    }
+
+    fun updateProject(
+        name: String,
+        description: String,
+        status: String,
+        startDate: String,
+        endDate: String,
+        deadline: String,
+        projectId: String,
+    ) = liveData {
+        emit(ResultState.Loading)
+
+        try {
+            val projectRequest = CreateProjectRequest(
+                name = name,
+                description = description,
+                status = status,
+                startDate = startDate,
+                endDate = endDate,
+                deadline = deadline
+            )
+
+            val successResponse = projectsApiService.updateProject(projectId, projectRequest)
             emit(ResultState.Success(successResponse))
         } catch (e: Exception) {
             emit(ResultState.Error(e.message.toString()))

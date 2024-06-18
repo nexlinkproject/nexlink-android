@@ -32,7 +32,7 @@ data class ListAllUsersItem(
 	val fullName: String? = null,
 
 	@field:SerializedName("id")
-	val id: Int? = null,
+	val id: String? = null,
 
 	@field:SerializedName("email")
 	val email: String? = null,

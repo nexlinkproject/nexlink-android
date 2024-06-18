@@ -13,3 +13,14 @@ fun formatDate(dateString: String): String {
         dateString // Return original string in case of error
     }
 }
+
+fun formatDatePicker(dateString: String): String {
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale("id", "ID"))
+        val date = inputFormat.parse(dateString)
+        outputFormat.format(date)
+    } catch (e: Exception) {
+        dateString // Return original string in case of error
+    }
+}

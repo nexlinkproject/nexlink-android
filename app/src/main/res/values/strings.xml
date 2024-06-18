@@ -6,6 +6,19 @@
     <string name="title_projects">Projects</string>
     <string name="title_profile">Profile</string>
 
+    <string-array name="priority_array">
+        <item>Low</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
+
+    <string-array name="status_array">
+        <item>Active</item>
+        <item>On-Going</item>
+        <item>Cancelled</item>
+        <item>Completed</item>
+    </string-array>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="notification">Notification</string>
@@ -55,4 +68,15 @@
     <string name="txt_add_teammates_and_task">Add Teammates and Task</string>
     <string name="txt_timeout_message">Request Timeout. Please try again.</string>
     <string name="txt_retry">Retry</string>
+    <string name="txt_add_task">Add Task</string>
+    <string name="txt_task_detail">Task Detail</string>
+    <string name="txt_task_name">Task Name</string>
+    <string name="txt_assign_to">Assign To</string>
+    <string name="txt_priority">Priority</string>
+    <string name="txt_delete_task">Delete Task</string>
+    <string name="txt_edit_task">Edit Task</string>
+    <string name="txt_btn_cancelled">Cancelled</string>
+    <string name="txt_btn_pending">Pending</string>
+    <string name="txt_date_format_datepicker">YYYY/MM/DD</string>
+    <string name="txt_status">Status</string>
 </resources>

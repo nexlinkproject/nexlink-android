@@ -2,23 +2,33 @@ package com.nexlink.nexlinkmobileapp.view.ui.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.nexlink.nexlinkmobileapp.R
+import com.nexlink.nexlinkmobileapp.data.ResultState
 import com.nexlink.nexlinkmobileapp.databinding.ActivityMainBinding
 import com.nexlink.nexlinkmobileapp.view.factory.AuthModelFactory
-import com.nexlink.nexlinkmobileapp.view.ui.auth.login.LoginActivity
+import com.nexlink.nexlinkmobileapp.view.factory.UsersModelFactory
+import com.nexlink.nexlinkmobileapp.view.ui.auth.AuthViewModel
+import com.nexlink.nexlinkmobileapp.view.ui.auth.LoginActivity
+import com.nexlink.nexlinkmobileapp.view.ui.users.UsersViewModel
 
 class MainActivity : AppCompatActivity() {
 
-    private val authViewModel by viewModels<MainViewModel> {
+    private val authViewModel by viewModels<AuthViewModel> {
         AuthModelFactory.getInstance(this)
+    }
+
+    private val userViewModel by viewModels<UsersViewModel> {
+        UsersModelFactory.getInstance(this)
     }
 
     private lateinit var binding: ActivityMainBinding
@@ -33,6 +43,30 @@ class MainActivity : AppCompatActivity() {
             if (!user.isLogin) {
                 startActivity(Intent(this, LoginActivity::class.java))
                 finish()
+            }else{
+                userViewModel.getUserById(user.userId).observe(this) { result ->
+                    when (result) {
+                        is ResultState.Loading -> {}
+                        is ResultState.Success -> {
+                            Log.i("MainActivity", "User ${result.data.data?.user?.fullName} Was Login")
+                        }
+                        is ResultState.Error -> {
+                            AlertDialog.Builder(this).apply {
+                                setTitle("Session Expired")
+                                setMessage("Your session has expired. Please login again.")
+                                setPositiveButton("Ok") { _, _ ->
+                                    authViewModel.logout()
+                                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                                    finish()
+                                }
+                                create()
+                                show()
+                            }
+
+                            Log.i("MainActivity", "User not found, Error : ${result.error}")
+                        }
+                    }
+                }
             }
         }
 

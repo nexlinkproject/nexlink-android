@@ -7,11 +7,22 @@ import com.nexlink.nexlinkmobileapp.data.remote.retrofit.ApiService
 class UsersRepository private constructor(
     private val usersApiService: ApiService,
 ) {
-    fun getUsers() = liveData {
+//    fun getUsers() = liveData {
+//        emit(ResultState.Loading)
+//
+//        try {
+//            val successResponse = usersApiService.getAllUsers()
+//            emit(ResultState.Success(successResponse))
+//        } catch (e: Exception) {
+//            emit(ResultState.Error(e.message.toString()))
+//        }
+//    }
+
+    fun getUserById(userId: String) = liveData {
         emit(ResultState.Loading)
 
         try {
-            val successResponse = usersApiService.getAllUsers()
+            val successResponse = usersApiService.getUserById(userId)
             emit(ResultState.Success(successResponse))
         } catch (e: Exception) {
             emit(ResultState.Error(e.message.toString()))

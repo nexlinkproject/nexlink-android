@@ -4,26 +4,33 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.nexlink.nexlinkmobileapp.R
 import com.nexlink.nexlinkmobileapp.data.ResultState
 import com.nexlink.nexlinkmobileapp.data.remote.response.projects.ListProjectTasksItem
 import com.nexlink.nexlinkmobileapp.data.remote.response.projects.ListProjectUsersItem
-import com.nexlink.nexlinkmobileapp.databinding.ActivityAddTeammatesAndTaskBinding
+import com.nexlink.nexlinkmobileapp.databinding.ActivityEditProjectBinding
 import com.nexlink.nexlinkmobileapp.view.adapter.ProjectTasksAdapter
 import com.nexlink.nexlinkmobileapp.view.adapter.ProjectUsersAdapter
 import com.nexlink.nexlinkmobileapp.view.factory.ProjectsModelFactory
 import com.nexlink.nexlinkmobileapp.view.ui.projects.ProjectsViewModel
 import com.nexlink.nexlinkmobileapp.view.ui.tasks.CreateTaskActivity
 import com.nexlink.nexlinkmobileapp.view.ui.tasks.DetailTaskActivity
-import com.nexlink.nexlinkmobileapp.view.utils.formatDate
+import com.nexlink.nexlinkmobileapp.view.utils.formatDatePicker
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-class AddTeammatesAndTaskActivity : AppCompatActivity() {
+class EditProjectActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityAddTeammatesAndTaskBinding
+    private lateinit var binding: ActivityEditProjectBinding
 
     private lateinit var projectUsersAdapter: ProjectUsersAdapter
     private lateinit var projectTasksAdapter: ProjectTasksAdapter
@@ -39,7 +46,7 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        binding = ActivityAddTeammatesAndTaskBinding.inflate(layoutInflater)
+        binding = ActivityEditProjectBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // Set up toolbar
@@ -51,26 +58,51 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        // Set up buttons click listeners
-        binding.btnAddTeammate.setOnClickListener {
-            println("Add teammate")
-        }
+        // Set up date pickers
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-        binding.btnAddTask.setOnClickListener {
-            val detailProjectIntent = Intent(this@AddTeammatesAndTaskActivity, CreateTaskActivity::class.java).apply {
-                putExtra(CreateTaskActivity.EXTRA_PROJECT_ID, intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_ID))
+        binding.tfStartDate.apply {
+            isFocusable = false
+            isClickable = true
+            setOnClickListener {
+                showDatePicker { date ->
+                    setText(dateFormat.format(date))
+                }
             }
-//            startActivity(detailProjectIntent)
-            startActivityForResult(detailProjectIntent, REQUEST_CREATE_TASK)
         }
 
-        binding.btnGenerateMl.setOnClickListener {
-            println("Generate ML")
+        binding.tfEndDate.apply {
+            isFocusable = false
+            isClickable = true
+            setOnClickListener {
+                showDatePicker { date ->
+                    setText(dateFormat.format(date))
+                }
+            }
         }
 
-        binding.btnSubmit.setOnClickListener {
-            println("Submit")
+        // Set up button listeners
+        binding.btnAddTask.setOnClickListener {
+            val detailProjectIntent = Intent(this, CreateTaskActivity::class.java).apply {
+                putExtra(
+                    CreateTaskActivity.EXTRA_PROJECT_ID,
+                    intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_ID)
+                )
+            }
+            startActivityForResult(
+                detailProjectIntent,
+                EditProjectActivity.REQUEST_CREATE_TASK
+            )
         }
+
+        binding.btnSaveProject.setOnClickListener {
+            updateProject()
+        }
+
+        // Set up status dropdown
+        val status = resources.getStringArray(R.array.status_array)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, status)
+        binding.selectStatus.setAdapter(adapter)
 
         setupRecyclerViews()
         setupDataDetailProject()
@@ -83,13 +115,75 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CREATE_TASK && resultCode == RESULT_OK) {
+        if (requestCode == EditProjectActivity.REQUEST_CREATE_TASK && resultCode == RESULT_OK) {
             // Refresh data tasks setelah kembali dari CreateTaskActivity
-            val projectId = intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_ID)
+            val projectId = intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_ID)
             if (projectId != null) {
                 isTasksLoading = true
                 showLoading(true)
                 loadTasks(projectId)
+            }
+        }
+    }
+
+    private fun updateProject() {
+        val projectId = intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_ID)
+        val name = binding.tfProjectName.text.toString()
+        val description = binding.tfDescription.text.toString()
+        val startDate = binding.tfStartDate.text.toString()
+        val endDate = binding.tfEndDate.text.toString()
+        var status = binding.selectStatus.text.toString()
+        val deadline = binding.tfEndDate.text.toString() // ini masih perlu di ubah
+
+        when(status){
+            "Active" -> status = "active"
+            "On-Going" -> status = "on-going"
+            "Cancelled" -> status = "cancelled"
+            "Completed" -> status = "completed"
+            else -> status = "null"
+        }
+
+        if (name.isEmpty() || description.isEmpty() || startDate.isEmpty() || endDate.isEmpty() || status.isEmpty()) {
+            AlertDialog.Builder(this).apply {
+                setTitle("Error")
+                setMessage("Please fill all fields")
+                setPositiveButton("OK", null)
+                create()
+                show()
+            }
+            return
+        }
+
+        if (projectId != null) {
+            projectsViewModel.updateProject(
+                name,
+                description,
+                status,
+                startDate,
+                endDate,
+                deadline,
+                projectId
+            ).observe(this) { result ->
+                when (result) {
+                    is ResultState.Loading -> showLoading(true)
+
+                    is ResultState.Success -> {
+                        val dataProject = result.data.data?.updatedProject
+                        if (dataProject != null) {
+                            setResult(RESULT_OK)
+                            finish()
+                        }
+                        showLoading(false)
+                        showToast("Project ${dataProject?.name} updated successfully")
+
+                        Log.i("EditProjectActivity", "Project ${dataProject?.name} updated successfully")
+                    }
+
+                    is ResultState.Error -> {
+                        showLoading(false)
+                        Log.e("EditProjectActivity", "Failed to update project: ${result.error}")
+                    }
+                }
             }
         }
     }
@@ -103,21 +197,28 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
     }
 
     private fun setupDataDetailProject() {
-        val projectName = intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_NAME)
-        val projectDescription = intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_DESCRIPTION)
+        val projectName = intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_NAME)
+        val projectDescription = intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_DESCRIPTION)
+        val projectStatus = intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_STATUS)
+        val projectStartDate = intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_START_DATE)
+        val projectEndDate = intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_END_DATE)
 
-        val projectStartDate =
-            formatDate(intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_START_DATE).toString())
-        val projectEndDate = formatDate(intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_END_DATE).toString())
-        val projectDate = "$projectStartDate - $projectEndDate"
+        binding.tfProjectName.setText(projectName)
+        binding.tfDescription.setText(projectDescription)
+        binding.tfStartDate.setText(formatDatePicker(projectStartDate.toString()))
+        binding.tfEndDate.setText(formatDatePicker(projectEndDate.toString()))
 
-        binding.tvProjectName.text = projectName
-        binding.tvDescription.text = projectDescription
-        binding.tvDeadline.text = projectDate
+        when(projectStatus){
+            "active" -> binding.selectStatus.setText("Active", false)
+            "on-going" -> binding.selectStatus.setText("On-Going", false)
+            "cancelled" -> binding.selectStatus.setText("Cancelled", false)
+            "completed" -> binding.selectStatus.setText("Completed", false)
+            else -> binding.selectStatus.setText("Null", false)
+        }
     }
 
-    private fun getDataTeammatesAndTasks(){
-        val projectId = intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_ID)
+    private fun getDataTeammatesAndTasks() {
+        val projectId = intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_ID)
         if (projectId != null) {
             isTeammatesLoading = true
             isTasksLoading = true
@@ -145,7 +246,8 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
                         projectUsersAdapter.submitList(users.project?.users)
 
                         // Set on item click listener for rv teammates
-                        projectUsersAdapter.setOnItemClickCallback(object : ProjectUsersAdapter.OnItemClickCallback {
+                        projectUsersAdapter.setOnItemClickCallback(object :
+                            ProjectUsersAdapter.OnItemClickCallback {
                             override fun onItemClicked(data: ListProjectUsersItem) {
                                 showSelectedUser(
                                     data,
@@ -165,7 +267,7 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
                     binding.rvTeammates.visibility = View.GONE
                     binding.tvNoTeammates.visibility = View.VISIBLE
 //                    showToast(result.error)
-                    Log.e("AddTeamAndTaskActivity", "Failed to load teammates: ${result.error}")
+                    Log.e("EditProjectActivity", "Failed to load teammates: ${result.error}")
                     isTeammatesLoading = false
                     checkIfDataLoaded()
                 }
@@ -190,7 +292,8 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
                         projectTasksAdapter.submitList(tasks)
 
                         // Set on item click listener for rv tasks
-                        projectTasksAdapter.setOnItemClickCallback(object : ProjectTasksAdapter.OnItemClickCallback {
+                        projectTasksAdapter.setOnItemClickCallback(object :
+                            ProjectTasksAdapter.OnItemClickCallback {
                             override fun onItemClicked(data: ListProjectTasksItem) {
                                 showSelectedTask(
                                     data,
@@ -210,7 +313,7 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
                     binding.rvTask.visibility = View.GONE
                     binding.tvNoTask.visibility = View.VISIBLE
 //                    showToast(result.error)
-                    Log.e("AddTeamAndTaskActivity", "Failed to load tasks: ${result.error}")
+                    Log.e("EditProjectActivity", "Failed to load tasks: ${result.error}")
                     isTasksLoading = false
                     checkIfDataLoaded()
                 }
@@ -248,6 +351,19 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
+    private fun showDatePicker(onDateSelected: (Date) -> Unit) {
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText(getString(R.string.txt_select_date))
+            .build()
+
+        datePicker.addOnPositiveButtonClickListener {
+            val selectedDate = Date(it)
+            onDateSelected(selectedDate)
+        }
+
+        datePicker.show(supportFragmentManager, "DATE_PICKER")
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
@@ -257,6 +373,7 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
         const val EXTRA_PROJECT_ID = "extra_project_id"
         const val EXTRA_PROJECT_NAME = "extra_project_name"
         const val EXTRA_PROJECT_DESCRIPTION = "extra_project_description"
+        const val EXTRA_PROJECT_STATUS = "extra_project_status"
         const val EXTRA_PROJECT_START_DATE = "extra_project_start_date"
         const val EXTRA_PROJECT_END_DATE = "extra_project_end_date"
         const val REQUEST_CREATE_TASK = 1

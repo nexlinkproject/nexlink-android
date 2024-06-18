@@ -14,7 +14,7 @@ data class OneTaskResponse(
 	val status: String? = null
 )
 
-data class Task(
+data class TaskItem(
 
 	@field:SerializedName("createdAt")
 	val createdAt: String? = null,
@@ -29,16 +29,13 @@ data class Task(
 	val description: String? = null,
 
 	@field:SerializedName("id")
-	val id: Int? = null,
+	val id: String? = null,
 
-	@field:SerializedName("title")
-	val title: String? = null,
+	@field:SerializedName("name")
+	val name: String? = null,
 
 	@field:SerializedName("startDate")
 	val startDate: String? = null,
-
-	@field:SerializedName("assignedTo")
-	val assignedTo: Any? = null,
 
 	@field:SerializedName("status")
 	val status: String? = null,
@@ -50,5 +47,5 @@ data class Task(
 data class DataOneTask(
 
 	@field:SerializedName("task")
-	val task: Task? = null
+	val task: TaskItem? = null
 )

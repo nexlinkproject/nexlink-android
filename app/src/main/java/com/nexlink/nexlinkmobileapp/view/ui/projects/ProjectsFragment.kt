@@ -79,7 +79,7 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
         binding.rvAllProjects.addItemDecoration(itemDecoration)
 
         // Mengambil data project
-//        getAllProjects()
+        getAllProjects()
 
         return root
     }
@@ -112,6 +112,7 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
         projectsViewModel.getProjects(status).observe(viewLifecycleOwner) { result ->
             when (result) {
                 is ResultState.Loading -> {
+                    showTimeout(false)
                     showLoading(true)
                 }
 
@@ -164,6 +165,7 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
             putExtra(DetailProjectActivity.EXTRA_PROJECT_ID, story.id)
             putExtra(DetailProjectActivity.EXTRA_PROJECT_NAME, story.name)
             putExtra(DetailProjectActivity.EXTRA_PROJECT_DESCRIPTION, story.description)
+            putExtra(DetailProjectActivity.EXTRA_PROJECT_STATUS, story.status)
             putExtra(DetailProjectActivity.EXTRA_PROJECT_START_DATE, story.startDate)
             putExtra(DetailProjectActivity.EXTRA_PROJECT_END_DATE, story.endDate)
         }

@@ -1,8 +1,9 @@
-package com.nexlink.nexlinkmobileapp.view.ui.projects.crud
+package com.nexlink.nexlinkmobileapp.view.ui.tasks
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -10,25 +11,25 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.nexlink.nexlinkmobileapp.R
 import com.nexlink.nexlinkmobileapp.data.ResultState
-import com.nexlink.nexlinkmobileapp.databinding.ActivityCreateProjectBinding
-import com.nexlink.nexlinkmobileapp.view.factory.ProjectsModelFactory
-import com.nexlink.nexlinkmobileapp.view.ui.projects.ProjectsViewModel
+import com.nexlink.nexlinkmobileapp.databinding.ActivityCreateTaskBinding
+import com.nexlink.nexlinkmobileapp.view.factory.TasksModelFactory
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class CreateProjectActivity : AppCompatActivity() {
+class CreateTaskActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityCreateProjectBinding
-    private val projectsViewModel by viewModels<ProjectsViewModel> {
-        ProjectsModelFactory.getInstance(this)
+    private lateinit var binding: ActivityCreateTaskBinding
+
+    private val tasksViewModel by viewModels<TasksViewModel> {
+        TasksModelFactory.getInstance(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        binding = ActivityCreateProjectBinding.inflate(layoutInflater)
+        binding = ActivityCreateTaskBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // Set up toolbar
@@ -38,6 +39,10 @@ class CreateProjectActivity : AppCompatActivity() {
 
         binding.toolbar.setNavigationOnClickListener {
             onBackPressed()
+        }
+
+        binding.btnSave.setOnClickListener {
+            createTask()
         }
 
         // Set up date pickers
@@ -63,51 +68,38 @@ class CreateProjectActivity : AppCompatActivity() {
             }
         }
 
-        // Set up save button
-        binding.btnSaveProject.setOnClickListener {
-            createProject()
-        }
+        // Set up priority dropdown
+        val priorities = resources.getStringArray(R.array.priority_array)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, priorities)
+        binding.selectPriority.setAdapter(adapter)
     }
 
-    private fun createProject() {
-        val name = binding.tfProjectName.text.toString()
-        val description = binding.tfDescription.text.toString()
-        val status = "active"
+    private fun createTask() {
+        val name = binding.tfTaskName.text.toString()
+        val description = binding.tfTaskDescription.text.toString()
+        val status = "in-progress"
         val startDate = binding.tfStartDate.text.toString()
         val endDate = binding.tfEndDate.text.toString()
-        val deadline = binding.tfEndDate.text.toString() // ini masih perlu di ubah
+        val priority = binding.selectPriority.text.toString()
+        val projectId = intent.getStringExtra(EXTRA_PROJECT_ID) ?: ""
 
-        if (name.isEmpty() || description.isEmpty() || startDate.isEmpty() || endDate.isEmpty()) {
-            AlertDialog.Builder(this).apply {
-                setTitle("Error")
-                setMessage("Please fill all fields")
-                setPositiveButton("OK", null)
-                create()
-                show()
-            }
+        if (name.isEmpty() || description.isEmpty() || startDate.isEmpty() || endDate.isEmpty() || priority.isEmpty()) {
+            showToast("Please fill in all fields")
             return
         }
 
-        projectsViewModel.createProject(name, description, status, startDate, endDate, deadline).observe(this) { result ->
+        tasksViewModel.createTask(name, description, status, startDate, endDate, priority, projectId).observe(this) { result ->
             when (result) {
                 is ResultState.Loading -> showLoading(true)
-
                 is ResultState.Success -> {
                     showLoading(false)
                     AlertDialog.Builder(this).apply {
-                        setTitle("Save Project")
-                        setMessage("Project $name has been saved. Let's add teammates and tasks.")
+                        setTitle("Save Task")
+                        setMessage("Task saved successfully!")
                         setPositiveButton("Next") { _, _ ->
-                            val project = result.data.data?.project
+                            val project = result.data.data?.task
                             if (project != null) {
-                                val detailProjectIntent = Intent(this@CreateProjectActivity, AddTeammatesAndTaskActivity::class.java).apply {
-                                    putExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_ID, project.id)
-                                    putExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_NAME, project.name)
-                                    putExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_DESCRIPTION, project.description)
-                                    putExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_START_DATE, project.startDate)
-                                    putExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_END_DATE, project.endDate)
-                                }
-                                startActivity(detailProjectIntent)
+                                setResult(RESULT_OK)
                                 finish()
                             }
                         }
@@ -120,7 +112,7 @@ class CreateProjectActivity : AppCompatActivity() {
                     showLoading(false)
                     AlertDialog.Builder(this).apply {
                         setTitle("Error")
-                        setMessage("Failed to save project: ${result.error}")
+                        setMessage("Failed to save task: ${result.error}")
                         setPositiveButton("OK", null)
                         create()
                         show()
@@ -128,6 +120,14 @@ class CreateProjectActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun showDatePicker(onDateSelected: (Date) -> Unit) {
@@ -143,12 +143,12 @@ class CreateProjectActivity : AppCompatActivity() {
         datePicker.show(supportFragmentManager, "DATE_PICKER")
     }
 
-    private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
-
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    companion object {
+        const val EXTRA_PROJECT_ID = "EXTRA_PROJECT_ID"
     }
 }

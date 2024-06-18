@@ -5,7 +5,7 @@
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.ui.projects.crud.CreateProjectActivity">
+    tools:context=".view.ui.tasks.CreateTaskActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarlayout"
@@ -23,7 +23,7 @@
 
             <TextView
                 style="@style/ToolbarTitleStyle"
-                android:text="@string/txt_add_project"/>
+                android:text="@string/txt_add_task" />
         </androidx.appcompat.widget.Toolbar>
 
         <View
@@ -36,38 +36,40 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
+            <!-- Task Detail Section -->
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_task_detail"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:fontFamily="@font/opensans_bold"
-                android:text="Project Detail"
+                android:text="@string/txt_task_detail"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 
+            <!-- Task Name Input -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.App.TextInput.Outline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="16dp"
+                android:hint="@string/txt_task_name">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tf_project_name"
+                    android:id="@+id/tf_task_name"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Project Name"
-                    android:maxLines="1"
-                    android:singleLine="true" />
+                    android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Task Description Input -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.App.TextInput.MultiLine"
                 android:layout_width="match_parent"
@@ -75,7 +77,7 @@
                 android:layout_marginBottom="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tf_description"
+                    android:id="@+id/tf_task_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="start|top"
@@ -85,11 +87,30 @@
                     android:minLines="3" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Task Priority Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/dropdown_priority"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:hint="@string/txt_priority"
+                app:boxStrokeColor="@color/primary_main">
+
+                <AutoCompleteTextView
+                    android:id="@+id/select_priority"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:focusable="false" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Start and End Date Input -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
                 android:weightSum="2">
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -127,13 +148,60 @@
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
+            <!-- Assign To Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/opensans_bold"
+                    android:text="@string/txt_assign_to"
+                    android:textColor="@color/black"
+                    android:textSize="20sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_add_user"
+                    style="@style/Widget.App.Button.WithIcon.AddButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:clipToPadding="false"
+                android:padding="8dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            <TextView
+                android:id="@+id/tv_no_task"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/opensans_regular"
+                android:gravity="center"
+                android:text="@string/txt_task_have_not_been_added_yet"
+                android:textColor="@color/paragraf"
+                android:textSize="14sp"
+                android:visibility="gone"
+                android:layout_marginBottom="16dp"
+                tools:visibility="visible" />
+
+            <!-- Save Button -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_save_project"
+                android:id="@+id/btn_save"
                 style="@style/Widget.App.Button.WithIcon.Save"
                 android:layout_width="match_parent"
-                android:text="@string/txt_save"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tf_description" />
+                android:layout_height="56dp"
+                android:text="@string/txt_save" />
         </LinearLayout>
     </ScrollView>
 
@@ -146,5 +214,4 @@
         app:layout_anchor="@id/main"
         app:layout_anchorGravity="center"
         tools:visibility="visible" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

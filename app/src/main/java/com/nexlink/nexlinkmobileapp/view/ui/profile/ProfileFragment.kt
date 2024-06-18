@@ -9,10 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.nexlink.nexlinkmobileapp.databinding.FragmentProfileBinding
 import com.nexlink.nexlinkmobileapp.view.factory.AuthModelFactory
+import com.nexlink.nexlinkmobileapp.view.ui.auth.AuthViewModel
 
 class ProfileFragment : Fragment() {
 
-    private val profileViewModel by viewModels<ProfileViewModel> {
+    private val authViewModel by viewModels<AuthViewModel> {
         AuthModelFactory.getInstance(requireContext())
     }
 
@@ -27,7 +28,7 @@ class ProfileFragment : Fragment() {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        profileViewModel.getSession().observe(viewLifecycleOwner) { user ->
+        authViewModel.getSession().observe(viewLifecycleOwner) { user ->
             binding.tvProfileName.text = user.fullName
         }
 
@@ -37,7 +38,7 @@ class ProfileFragment : Fragment() {
         }
 
         binding.btnLogout.setOnClickListener {
-            profileViewModel.logout()
+            authViewModel.logout()
         }
 
         return root
