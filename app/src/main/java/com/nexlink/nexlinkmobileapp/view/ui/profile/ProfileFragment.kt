@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import com.nexlink.nexlinkmobileapp.databinding.FragmentProfileBinding
 import com.nexlink.nexlinkmobileapp.view.factory.AuthModelFactory
 import com.nexlink.nexlinkmobileapp.view.ui.auth.AuthViewModel
+import com.nexlink.nexlinkmobileapp.view.utils.alertConfirmDialog
 
 class ProfileFragment : Fragment() {
 
@@ -38,10 +39,23 @@ class ProfileFragment : Fragment() {
         }
 
         binding.btnLogout.setOnClickListener {
-            authViewModel.logout()
+            showDeleteConfirmationDialog()
         }
 
         return root
+    }
+
+    private fun showDeleteConfirmationDialog() {
+        alertConfirmDialog(
+            context = requireContext(),
+            layoutInflater = layoutInflater,
+            onYesClicked = {
+                authViewModel.logout()
+            },
+            title = "Logout",
+            message = "Are you sure you want to logout?",
+            icons = "info"
+        )
     }
 
     override fun onDestroyView() {

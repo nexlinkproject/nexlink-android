@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="8dp"
+    android:background="@drawable/background_item_list_projects"
+    android:elevation="2dp"
+    android:gravity="center_vertical"
+    android:layout_marginBottom="15dp"
+    tools:background="@drawable/background_item_list_projects">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/view_project_status"
+                android:layout_width="4dp"
+                android:layout_height="50dp"
+                android:background="@drawable/background_shape_list_project"
+                tools:background="@color/primary_main" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_project_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Project Name"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    android:fontFamily="@font/opensans_bold" />
+                <TextView
+                    android:id="@+id/tv_project_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Project Status"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/opensans_bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <!-- Label Teammates -->
+                <TextView
+                    android:id="@+id/tvTeammatesLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Teammates"
+                    android:fontFamily="@font/opensans_regular"
+                    android:textColor="@color/teks"
+                    android:textSize="16sp" />
+
+                <!-- Daftar Teammates -->
+                <LinearLayout
+                    android:id="@+id/llTeammates"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal">
+
+                    <!-- Gambar Teammates -->
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/img_avatar1"
+                        android:contentDescription="Teammate 1"
+                        android:layout_marginEnd="4dp" />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/img_avatar2"
+                        android:contentDescription="Teammate 2"
+                        android:layout_marginEnd="4dp" />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/img_avatar3"
+                        android:contentDescription="Teammate 3"
+                        android:layout_marginEnd="4dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <!-- Label Due Date -->
+                <TextView
+                    android:id="@+id/tvDueDateLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="Due date"
+                    android:fontFamily="@font/opensans_regular"
+                    android:textColor="@color/teks"
+                    android:textSize="16sp" />
+
+                <!-- Deadline Task -->
+                <LinearLayout
+                    android:id="@+id/llDueDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_date_24dp"
+                        android:contentDescription="Calendar"
+                        android:layout_marginEnd="4dp" />
+
+                    <TextView
+                        android:id="@+id/tv_project_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="25 Mar 2099"
+                        android:textColor="@color/teks"
+                        android:fontFamily="@font/opensans_bold"
+                        android:textSize="14sp"
+                        tools:ignore="HardcodedText" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Progress Bar -->
+    <RelativeLayout
+        android:id="@+id/rlProgressBar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+            android:progressDrawable="@drawable/custom_progress_bar"
+            android:progress="88"
+            android:rotation="270"
+            android:layout_centerInParent="true" />
+
+        <TextView
+            android:id="@+id/tvProgressPercentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0%"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:layout_centerInParent="true"
+            tools:ignore="HardcodedText" />
+    </RelativeLayout>
+</LinearLayout>

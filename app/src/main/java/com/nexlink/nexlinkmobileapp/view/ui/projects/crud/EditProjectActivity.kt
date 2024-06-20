@@ -5,11 +5,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.nexlink.nexlinkmobileapp.R
@@ -20,9 +19,15 @@ import com.nexlink.nexlinkmobileapp.databinding.ActivityEditProjectBinding
 import com.nexlink.nexlinkmobileapp.view.adapter.ProjectTasksAdapter
 import com.nexlink.nexlinkmobileapp.view.adapter.ProjectUsersAdapter
 import com.nexlink.nexlinkmobileapp.view.factory.ProjectsModelFactory
+import com.nexlink.nexlinkmobileapp.view.factory.UsersModelFactory
 import com.nexlink.nexlinkmobileapp.view.ui.projects.ProjectsViewModel
 import com.nexlink.nexlinkmobileapp.view.ui.tasks.CreateTaskActivity
 import com.nexlink.nexlinkmobileapp.view.ui.tasks.DetailTaskActivity
+import com.nexlink.nexlinkmobileapp.view.ui.users.SearchUserActivity
+import com.nexlink.nexlinkmobileapp.view.ui.users.UsersViewModel
+import com.nexlink.nexlinkmobileapp.view.utils.alertConfirmDialog
+import com.nexlink.nexlinkmobileapp.view.utils.alertInfoDialog
+import com.nexlink.nexlinkmobileapp.view.utils.alertInfoDialogWithEvent
 import com.nexlink.nexlinkmobileapp.view.utils.formatDatePicker
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -40,6 +45,10 @@ class EditProjectActivity : AppCompatActivity() {
 
     private val projectsViewModel by viewModels<ProjectsViewModel> {
         ProjectsModelFactory.getInstance(this)
+    }
+
+    private val usersViewModel by viewModels<UsersViewModel> {
+        UsersModelFactory.getInstance(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,17 +91,22 @@ class EditProjectActivity : AppCompatActivity() {
         }
 
         // Set up button listeners
+        binding.btnAddTeammate.setOnClickListener{
+            val searchUserIntent = Intent(this, SearchUserActivity::class.java).apply {
+                putExtra(SearchUserActivity.EXTRA_PROJECT_ID, intent.getStringExtra(EXTRA_PROJECT_ID))
+                putExtra(SearchUserActivity.EXTRA_USER_ADD_TYPE, "project")
+            }
+            startActivityForResult(searchUserIntent, REQUEST_ADD_TEAMMATES)
+        }
+
         binding.btnAddTask.setOnClickListener {
-            val detailProjectIntent = Intent(this, CreateTaskActivity::class.java).apply {
+            val createTaskIntent = Intent(this, CreateTaskActivity::class.java).apply {
                 putExtra(
                     CreateTaskActivity.EXTRA_PROJECT_ID,
-                    intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_ID)
+                    intent.getStringExtra(EXTRA_PROJECT_ID)
                 )
             }
-            startActivityForResult(
-                detailProjectIntent,
-                EditProjectActivity.REQUEST_CREATE_TASK
-            )
+            startActivityForResult(createTaskIntent, REQUEST_CREATE_TASK)
         }
 
         binding.btnSaveProject.setOnClickListener {
@@ -115,19 +129,35 @@ class EditProjectActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == EditProjectActivity.REQUEST_CREATE_TASK && resultCode == RESULT_OK) {
-            // Refresh data tasks setelah kembali dari CreateTaskActivity
-            val projectId = intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_ID)
-            if (projectId != null) {
-                isTasksLoading = true
-                showLoading(true)
-                loadTasks(projectId)
+        when(requestCode) {
+            REQUEST_CREATE_TASK -> {
+                if (resultCode == RESULT_OK) {
+                    // Refresh data tasks setelah kembali dari CreateTaskActivity
+                    val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
+                    if (projectId != null) {
+                        isTasksLoading = true
+                        showLoading(true)
+                        loadTasks(projectId)
+                    }
+                }
+            }
+
+            REQUEST_ADD_TEAMMATES -> {
+                if (resultCode == RESULT_OK) {
+                    // Refresh data teammates setelah kembali dari SearchUserActivity
+                    val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
+                    if (projectId != null) {
+                        isTeammatesLoading = true
+                        showLoading(true)
+                        loadTeammates(projectId)
+                    }
+                }
             }
         }
     }
 
     private fun updateProject() {
-        val projectId = intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_ID)
+        val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
         val name = binding.tfProjectName.text.toString()
         val description = binding.tfDescription.text.toString()
         val startDate = binding.tfStartDate.text.toString()
@@ -137,71 +167,53 @@ class EditProjectActivity : AppCompatActivity() {
 
         when(status){
             "Active" -> status = "active"
-            "On-Going" -> status = "on-going"
+            "In Progress" -> status = "in-progress"
             "Cancelled" -> status = "cancelled"
             "Completed" -> status = "completed"
             else -> status = "null"
         }
 
         if (name.isEmpty() || description.isEmpty() || startDate.isEmpty() || endDate.isEmpty() || status.isEmpty()) {
-            AlertDialog.Builder(this).apply {
-                setTitle("Error")
-                setMessage("Please fill all fields")
-                setPositiveButton("OK", null)
-                create()
-                show()
-            }
+            alertInfoDialog(
+                context = this,
+                layoutInflater = layoutInflater,
+                title = "Invalid Input",
+                message = "Please fill all fields",
+                icons = "info"
+            )
             return
         }
 
-        if (projectId != null) {
-            projectsViewModel.updateProject(
-                name,
-                description,
-                status,
-                startDate,
-                endDate,
-                deadline,
-                projectId
-            ).observe(this) { result ->
-                when (result) {
-                    is ResultState.Loading -> showLoading(true)
+        // Konfirmasi sebelum mengubah proyek
+        alertConfirmDialog(
+            context = this,
+            layoutInflater = layoutInflater,
+            onYesClicked = {
+                saveUpdateProject(name, description, status, startDate, endDate, deadline, projectId.toString())
+            },
+            title = "Confirm Update",
+            message = "Are you sure the data is correct and you want to update the project?",
+            icons = "info"
+        )
 
-                    is ResultState.Success -> {
-                        val dataProject = result.data.data?.updatedProject
-                        if (dataProject != null) {
-                            setResult(RESULT_OK)
-                            finish()
-                        }
-                        showLoading(false)
-                        showToast("Project ${dataProject?.name} updated successfully")
-
-                        Log.i("EditProjectActivity", "Project ${dataProject?.name} updated successfully")
-                    }
-
-                    is ResultState.Error -> {
-                        showLoading(false)
-                        Log.e("EditProjectActivity", "Failed to update project: ${result.error}")
-                    }
-                }
-            }
-        }
     }
 
     private fun setupRecyclerViews() {
-        projectUsersAdapter = ProjectUsersAdapter()
+        projectUsersAdapter = ProjectUsersAdapter(showRemoveButton = true)
         binding.rvTeammates.adapter = projectUsersAdapter
+        binding.rvTeammates.layoutManager = LinearLayoutManager(this)
 
         projectTasksAdapter = ProjectTasksAdapter()
         binding.rvTask.adapter = projectTasksAdapter
+        binding.rvTask.layoutManager = LinearLayoutManager(this)
     }
 
     private fun setupDataDetailProject() {
-        val projectName = intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_NAME)
-        val projectDescription = intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_DESCRIPTION)
-        val projectStatus = intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_STATUS)
-        val projectStartDate = intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_START_DATE)
-        val projectEndDate = intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_END_DATE)
+        val projectName = intent.getStringExtra(EXTRA_PROJECT_NAME)
+        val projectDescription = intent.getStringExtra(EXTRA_PROJECT_DESCRIPTION)
+        val projectStatus = intent.getStringExtra(EXTRA_PROJECT_STATUS)
+        val projectStartDate = intent.getStringExtra(EXTRA_PROJECT_START_DATE)
+        val projectEndDate = intent.getStringExtra(EXTRA_PROJECT_END_DATE)
 
         binding.tfProjectName.setText(projectName)
         binding.tfDescription.setText(projectDescription)
@@ -210,15 +222,65 @@ class EditProjectActivity : AppCompatActivity() {
 
         when(projectStatus){
             "active" -> binding.selectStatus.setText("Active", false)
-            "on-going" -> binding.selectStatus.setText("On-Going", false)
+            "in-progress" -> binding.selectStatus.setText("In Progress", false)
             "cancelled" -> binding.selectStatus.setText("Cancelled", false)
             "completed" -> binding.selectStatus.setText("Completed", false)
             else -> binding.selectStatus.setText("Null", false)
         }
     }
 
+    private fun saveUpdateProject(name: String, description: String, status: String, startDate: String, endDate: String, deadline: String, projectId: String){
+        projectsViewModel.updateProject(
+            name,
+            description,
+            status,
+            startDate,
+            endDate,
+            deadline,
+            projectId
+        ).observe(this) { result ->
+            when (result) {
+                is ResultState.Loading -> showLoading(true)
+
+                is ResultState.Success -> {
+                    showLoading(false)
+                    val dataProject = result.data.data?.updatedProject
+                    if (dataProject != null) {
+                        alertInfoDialogWithEvent(
+                            context = this,
+                            layoutInflater = layoutInflater,
+                            onOkClicked = {
+                                setResult(RESULT_OK)
+                                finish()
+                            },
+                            title = "Update Project",
+                            message = "Project ${dataProject.name} updated successfully!",
+                            icons = "success"
+                        )
+
+                        Log.i("EditProjectActivity", "Project ${dataProject.name} updated successfully")
+                    }
+
+                }
+
+                is ResultState.Error -> {
+                    showLoading(false)
+                    alertInfoDialog(
+                        context = this,
+                        layoutInflater = layoutInflater,
+                        title = "Error",
+                        message = "Failed to update project",
+                        icons = "error"
+                    )
+
+                    Log.e("EditProjectActivity", "Failed to update project: ${result.error}")
+                }
+            }
+        }
+    }
+
     private fun getDataTeammatesAndTasks() {
-        val projectId = intent.getStringExtra(EditProjectActivity.EXTRA_PROJECT_ID)
+        val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
         if (projectId != null) {
             isTeammatesLoading = true
             isTasksLoading = true
@@ -250,10 +312,22 @@ class EditProjectActivity : AppCompatActivity() {
                             ProjectUsersAdapter.OnItemClickCallback {
                             override fun onItemClicked(data: ListProjectUsersItem) {
                                 showSelectedUser(
-                                    data,
-                                    binding.rvTask.findViewHolderForAdapterPosition(
-                                        projectUsersAdapter.currentList.indexOf(data)
-                                    )!!
+                                    data
+                                )
+                            }
+                        })
+
+                        projectUsersAdapter.setOnRemoveButtonClickCallback(object : ProjectUsersAdapter.OnRemoveButtonClickCallback {
+                            override fun onRemoveButtonClicked(user: ListProjectUsersItem) {
+                                alertConfirmDialog(
+                                    context = this@EditProjectActivity,
+                                    layoutInflater = layoutInflater,
+                                    onYesClicked = {
+                                        removeUserFromProject(user)
+                                    },
+                                    title = "Remove User",
+                                    message = "Are you sure you want to remove ${user.fullName} from the project?",
+                                    icons = "warning"
                                 )
                             }
                         })
@@ -266,7 +340,7 @@ class EditProjectActivity : AppCompatActivity() {
                 is ResultState.Error -> {
                     binding.rvTeammates.visibility = View.GONE
                     binding.tvNoTeammates.visibility = View.VISIBLE
-//                    showToast(result.error)
+
                     Log.e("EditProjectActivity", "Failed to load teammates: ${result.error}")
                     isTeammatesLoading = false
                     checkIfDataLoaded()
@@ -312,7 +386,7 @@ class EditProjectActivity : AppCompatActivity() {
                 is ResultState.Error -> {
                     binding.rvTask.visibility = View.GONE
                     binding.tvNoTask.visibility = View.VISIBLE
-//                    showToast(result.error)
+
                     Log.e("EditProjectActivity", "Failed to load tasks: ${result.error}")
                     isTasksLoading = false
                     checkIfDataLoaded()
@@ -321,17 +395,64 @@ class EditProjectActivity : AppCompatActivity() {
         }
     }
 
-    private fun showSelectedUser(user: ListProjectUsersItem, viewHolder: RecyclerView.ViewHolder) {
-        showToast("User ${user.fullName} clicked")
+    private fun showSelectedUser(user: ListProjectUsersItem) {
+        // TODO: Show user detail
     }
+
+    private fun removeUserFromProject(user: ListProjectUsersItem) {
+        val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
+        if (projectId != null && user.id != null) {
+            usersViewModel.removeUserFromProject(user.id, projectId).observe(this) { result ->
+                when (result) {
+                    is ResultState.Loading -> showLoading(true)
+                    is ResultState.Success -> {
+                        val data = result.data.message
+                        if (data != null) {
+                            alertInfoDialogWithEvent(
+                                context = this,
+                                layoutInflater = layoutInflater,
+                                onOkClicked = {
+                                    // Refresh data teammates setelah remove user
+                                    isTeammatesLoading = true
+                                    showLoading(true)
+                                    loadTeammates(projectId)
+                                },
+                                title = "Remove User",
+                                message = "User ${user.fullName} removed from project successfully!",
+                                icons = "success"
+                            )
+
+                            Log.i("EditProjectActivity", "User: ${user.fullName}, ${data}")
+                        }
+                        showLoading(false)
+                    }
+                    is ResultState.Error -> {
+                        showLoading(false)
+                        alertInfoDialog(
+                            context = this,
+                            layoutInflater = layoutInflater,
+                            title = "Error",
+                            message = "Failed to remove user ${user.fullName}",
+                            icons = "error"
+                        )
+
+                        Log.e("EditProjectActivity", "Failed to remove user: ${result.error}")
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun showSelectedTask(task: ListProjectTasksItem, viewHolder: RecyclerView.ViewHolder) {
         val detailProjectIntent = Intent(this, DetailTaskActivity::class.java).apply {
             putExtra(DetailTaskActivity.EXTRA_TASK_ID, task.id)
             putExtra(DetailTaskActivity.EXTRA_TASK_NAME, task.name)
             putExtra(DetailTaskActivity.EXTRA_TASK_DESCRIPTION, task.description)
-            putExtra(DetailTaskActivity.EXTRA_TASK_DEADLINE, task.endDate)
-            putExtra(DetailTaskActivity.EXTRA_TASK_PRIORITY, "Null")
+            putExtra(DetailTaskActivity.EXTRA_TASK_STATUS, task.status)
+            putExtra(DetailTaskActivity.EXTRA_TASK_START_DATE, task.startDate)
+            putExtra(DetailTaskActivity.EXTRA_TASK_END_DATE, task.endDate)
+            putExtra(DetailTaskActivity.EXTRA_TASK_PRIORITY, task.priority)
             putExtra(DetailTaskActivity.EXTRA_PROJECT_ID, task.projectId)
         }
         startActivity(detailProjectIntent)
@@ -345,10 +466,6 @@ class EditProjectActivity : AppCompatActivity() {
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun showDatePicker(onDateSelected: (Date) -> Unit) {
@@ -377,5 +494,6 @@ class EditProjectActivity : AppCompatActivity() {
         const val EXTRA_PROJECT_START_DATE = "extra_project_start_date"
         const val EXTRA_PROJECT_END_DATE = "extra_project_end_date"
         const val REQUEST_CREATE_TASK = 1
+        const val REQUEST_ADD_TEAMMATES = 1
     }
 }

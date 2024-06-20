@@ -15,6 +15,15 @@
         android:theme="@style/Theme.NexlinkMobileApp"
         tools:targetApi="31">
         <activity
+            android:name=".view.ui.tasks.EditTaskActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.tasks.AddUserTaskActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.users.SearchUserActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.ui.projects.crud.EditProjectActivity"
             android:exported="false" />
         <activity

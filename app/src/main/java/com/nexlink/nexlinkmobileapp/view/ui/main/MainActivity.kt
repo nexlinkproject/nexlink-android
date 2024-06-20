@@ -46,11 +46,15 @@ class MainActivity : AppCompatActivity() {
             }else{
                 userViewModel.getUserById(user.userId).observe(this) { result ->
                     when (result) {
-                        is ResultState.Loading -> {}
+                        is ResultState.Loading -> {
+                            showLoading(true)
+                        }
                         is ResultState.Success -> {
+                            showLoading(false)
                             Log.i("MainActivity", "User ${result.data.data?.user?.fullName} Was Login")
                         }
                         is ResultState.Error -> {
+                            showLoading(false)
                             AlertDialog.Builder(this).apply {
                                 setTitle("Session Expired")
                                 setMessage("Your session has expired. Please login again.")
@@ -126,8 +130,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
-//        setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }

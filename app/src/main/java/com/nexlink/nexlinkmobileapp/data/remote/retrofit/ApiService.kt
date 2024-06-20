@@ -12,9 +12,13 @@ import com.nexlink.nexlinkmobileapp.data.remote.response.projects.GetProjectTask
 import com.nexlink.nexlinkmobileapp.data.remote.response.projects.GetProjectUsersResponse
 import com.nexlink.nexlinkmobileapp.data.remote.response.projects.OneProjectResponse
 import com.nexlink.nexlinkmobileapp.data.remote.response.projects.OneProjectUpdateResponse
-import com.nexlink.nexlinkmobileapp.data.remote.response.projects.ProjectUsers
 import com.nexlink.nexlinkmobileapp.data.remote.response.tasks.AllTasksResponse
+import com.nexlink.nexlinkmobileapp.data.remote.response.tasks.DeleteTaskResponse
+import com.nexlink.nexlinkmobileapp.data.remote.response.tasks.GetTaskUsersResponse
 import com.nexlink.nexlinkmobileapp.data.remote.response.tasks.OneTaskResponse
+import com.nexlink.nexlinkmobileapp.data.remote.response.tasks.UpdateTaskResponse
+import com.nexlink.nexlinkmobileapp.data.remote.response.users.AddUserToProjectResponse
+import com.nexlink.nexlinkmobileapp.data.remote.response.users.AddUserToTaskResponse
 import com.nexlink.nexlinkmobileapp.data.remote.response.users.AllUsersResponse
 import com.nexlink.nexlinkmobileapp.data.remote.response.users.OneUserResponse
 import retrofit2.http.Body
@@ -90,6 +94,32 @@ interface ApiService {
         @Path("userId") userId: String,
     ): OneUserResponse
 
+    @Headers("Content-Type: application/json")
+    @POST("projects/{projectId}/users/{userId}")
+    suspend fun addUserToProject(
+        @Path("userId") userId: String,
+        @Path("projectId") projectId: String,
+    ): AddUserToProjectResponse
+
+    @Headers("Content-Type: application/json")
+    @POST("tasks/{taskId}/users/{userId}")
+    suspend fun addUserToTask(
+        @Path("userId") userId: String,
+        @Path("taskId") taskId: String,
+    ): AddUserToTaskResponse
+
+    @DELETE("projects/{projectId}/users/{userId}")
+    suspend fun removeUserFromProject(
+        @Path("userId") userId: String,
+        @Path("projectId") projectId: String,
+    ): DeleteProjectResponse
+
+    @DELETE("tasks/{taskId}/users/{userId}")
+    suspend fun removeUserFromTask(
+        @Path("userId") userId: String,
+        @Path("taskId") taskId: String,
+    ): DeleteTaskResponse
+
     // ======= TASKS ENDPOINTS =======
     @GET("tasks")
     suspend fun getAllTasks(
@@ -100,9 +130,26 @@ interface ApiService {
         @Path("taskId") taskId: String,
     ): OneTaskResponse
 
+    @DELETE("tasks/{taskId}")
+    suspend fun deleteTask(
+        @Path("taskId") taskId: String
+    ): DeleteTaskResponse
+
     @Headers("Content-Type: application/json")
     @POST("tasks")
     suspend fun createTasks(
         @Body task: CreateTasksRequest,
     ): OneTaskResponse
+
+    @Headers("Content-Type: application/json")
+    @PUT("tasks/{taskId}")
+    suspend fun updateTask(
+        @Path("taskId") projectId: String,
+        @Body task: CreateTasksRequest
+    ): UpdateTaskResponse
+
+    @GET("tasks/{taskId}/users") // masih belum tau endpointnya
+    suspend fun getTaskUsers(
+        @Path("taskId") taskId: String,
+    ): GetTaskUsersResponse // masih belum tau response nya
 }

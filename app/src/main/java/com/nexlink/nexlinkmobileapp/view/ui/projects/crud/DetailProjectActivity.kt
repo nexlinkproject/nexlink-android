@@ -4,12 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.nexlink.nexlinkmobileapp.R
 import com.nexlink.nexlinkmobileapp.data.ResultState
 import com.nexlink.nexlinkmobileapp.data.remote.response.projects.ListProjectTasksItem
 import com.nexlink.nexlinkmobileapp.data.remote.response.projects.ListProjectUsersItem
@@ -19,7 +19,11 @@ import com.nexlink.nexlinkmobileapp.view.adapter.ProjectUsersAdapter
 import com.nexlink.nexlinkmobileapp.view.factory.ProjectsModelFactory
 import com.nexlink.nexlinkmobileapp.view.ui.projects.ProjectsViewModel
 import com.nexlink.nexlinkmobileapp.view.ui.tasks.DetailTaskActivity
+import com.nexlink.nexlinkmobileapp.view.utils.alertConfirmDialog
+import com.nexlink.nexlinkmobileapp.view.utils.alertInfoDialog
+import com.nexlink.nexlinkmobileapp.view.utils.alertInfoDialogWithEvent
 import com.nexlink.nexlinkmobileapp.view.utils.formatDate
+
 
 class DetailProjectActivity : AppCompatActivity() {
 
@@ -62,8 +66,7 @@ class DetailProjectActivity : AppCompatActivity() {
                 putExtra(EditProjectActivity.EXTRA_PROJECT_START_DATE, intent.getStringExtra(EXTRA_PROJECT_START_DATE))
                 putExtra(EditProjectActivity.EXTRA_PROJECT_END_DATE, intent.getStringExtra(EXTRA_PROJECT_END_DATE))
             }
-//            startActivity(editProjectIntent)
-            startActivityForResult(editProjectIntent, DetailProjectActivity.REQUEST_UPDATE_PROJECT)
+            startActivityForResult(editProjectIntent, REQUEST_UPDATE_PROJECT)
         }
 
         binding.btnDeleteProject.setOnClickListener {
@@ -81,9 +84,9 @@ class DetailProjectActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == DetailProjectActivity.REQUEST_UPDATE_PROJECT && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_UPDATE_PROJECT && resultCode == RESULT_OK) {
             // Refresh data detail project
-            val projectId = intent.getStringExtra(DetailProjectActivity.EXTRA_PROJECT_ID)
+            val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
             if (projectId != null) {
                 isDataProjectLoading = true
                 showLoading(true)
@@ -93,9 +96,11 @@ class DetailProjectActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerViews() {
-        projectUsersAdapter = ProjectUsersAdapter()
+        binding.rvTeammates.layoutManager = LinearLayoutManager(this)
+        projectUsersAdapter = ProjectUsersAdapter(showRemoveButton = false)
         binding.rvTeammates.adapter = projectUsersAdapter
 
+        binding.rvTask.layoutManager = LinearLayoutManager(this)
         projectTasksAdapter = ProjectTasksAdapter()
         binding.rvTask.adapter = projectTasksAdapter
     }
@@ -103,14 +108,35 @@ class DetailProjectActivity : AppCompatActivity() {
     private fun setupDataDetailProject() {
         val projectName = intent.getStringExtra(EXTRA_PROJECT_NAME)
         val projectDescription = intent.getStringExtra(EXTRA_PROJECT_DESCRIPTION)
+        var projectStatus = intent.getStringExtra(EXTRA_PROJECT_STATUS)
 
         val projectStartDate =
             formatDate(intent.getStringExtra(EXTRA_PROJECT_START_DATE).toString())
         val projectEndDate = formatDate(intent.getStringExtra(EXTRA_PROJECT_END_DATE).toString())
         val projectDate = "$projectStartDate - $projectEndDate"
 
+        when(projectStatus) {
+            "in-progress" -> {
+                binding.tvProjectStatus.setTextColor(resources.getColor(R.color.warning_main))
+                projectStatus = "In Progress"
+            }
+            "completed" -> {
+                binding.tvProjectStatus.setTextColor(resources.getColor(R.color.success_main))
+                projectStatus = "Completed"
+            }
+            "cancelled" -> {
+                binding.tvProjectStatus.setTextColor(resources.getColor(R.color.danger_main))
+                projectStatus = "Cancelled"
+            }
+            else -> {
+                binding.tvProjectStatus.setTextColor(resources.getColor(R.color.primary_main))
+                projectStatus = "Active"
+            }
+        }
+
         binding.tvProjectName.text = projectName
         binding.tvDescription.text = projectDescription
+        binding.tvProjectStatus.text = projectStatus
         binding.tvDeadline.text = projectDate
     }
 
@@ -135,6 +161,26 @@ class DetailProjectActivity : AppCompatActivity() {
                     if (project != null) {
                         binding.tvProjectName.text = project.name
                         binding.tvDescription.text = project.description
+
+                        when(project.status) {
+                            "in-progress" -> {
+                                binding.tvProjectStatus.setTextColor(resources.getColor(R.color.warning_main))
+                                binding.tvProjectStatus.text = "In Progress"
+                            }
+                            "completed" -> {
+                                binding.tvProjectStatus.setTextColor(resources.getColor(R.color.success_main))
+                                binding.tvProjectStatus.text = "Completed"
+                            }
+                            "cancelled" -> {
+                                binding.tvProjectStatus.setTextColor(resources.getColor(R.color.danger_main))
+                                binding.tvProjectStatus.text = "Cancelled"
+                            }
+                            else -> {
+                                binding.tvProjectStatus.setTextColor(resources.getColor(R.color.primary_main))
+                                binding.tvProjectStatus.text = "Active"
+                            }
+                        }
+
                         val projectStartDate = formatDate(project.startDate.toString())
                         val projectEndDate = formatDate(project.endDate.toString())
                         binding.tvDeadline.text = "$projectStartDate - $projectEndDate"
@@ -182,10 +228,7 @@ class DetailProjectActivity : AppCompatActivity() {
                         projectUsersAdapter.setOnItemClickCallback(object : ProjectUsersAdapter.OnItemClickCallback {
                             override fun onItemClicked(data: ListProjectUsersItem) {
                                 showSelectedUser(
-                                    data,
-                                    binding.rvTask.findViewHolderForAdapterPosition(
-                                        projectUsersAdapter.currentList.indexOf(data)
-                                    )!!
+                                    data
                                 )
                             }
                         })
@@ -199,7 +242,6 @@ class DetailProjectActivity : AppCompatActivity() {
                     binding.rvTeammates.visibility = View.GONE
                     binding.tvNoTeammates.visibility = View.VISIBLE
                     Log.e("DetailProjectActivity", "Failed to load teammates: ${result.error}")
-//                    showToast(result.error)
                     isTeammatesLoading = false
                     checkIfDataLoaded()
                 }
@@ -212,7 +254,11 @@ class DetailProjectActivity : AppCompatActivity() {
             when (result) {
                 is ResultState.Loading -> {}
                 is ResultState.Success -> {
-                    val tasks = result.data.data?.tasks
+                    val tasksResponse = result.data
+                    val tasks = tasksResponse.data?.tasks
+
+                    // Cetak response lengkap untuk debugging
+                    Log.i("DetailProjectActivity", "Tasks Response: $tasksResponse")
 
                     if (tasks.isNullOrEmpty()) {
                         binding.rvTask.visibility = View.GONE
@@ -225,6 +271,7 @@ class DetailProjectActivity : AppCompatActivity() {
                         // Set on item click listener for rv tasks
                         projectTasksAdapter.setOnItemClickCallback(object : ProjectTasksAdapter.OnItemClickCallback {
                             override fun onItemClicked(data: ListProjectTasksItem) {
+                                Log.i("DetailProjectActivity", "Task: $data")
                                 showSelectedTask(
                                     data,
                                     binding.rvTask.findViewHolderForAdapterPosition(
@@ -242,7 +289,7 @@ class DetailProjectActivity : AppCompatActivity() {
                 is ResultState.Error -> {
                     binding.rvTask.visibility = View.GONE
                     binding.tvNoTask.visibility = View.VISIBLE
-//                    showToast(result.error)
+
                     Log.e("DetailProjectActivity", "Failed to load tasks: ${result.error}")
                     isTasksLoading = false
                     checkIfDataLoaded()
@@ -251,24 +298,22 @@ class DetailProjectActivity : AppCompatActivity() {
         }
     }
 
-    private fun showSelectedUser(user: ListProjectUsersItem, viewHolder: RecyclerView.ViewHolder) {
-        showToast("User ${user.fullName} clicked")
-//        val detailProjectIntent = Intent(this, DetailTaskActivity::class.java).apply {
-//            putExtra(DetailTaskActivity.EXTRA_TASK_ID, user.id)
-//        }
-//        startActivity(detailProjectIntent)
+    private fun showSelectedUser(user: ListProjectUsersItem) {
+        // TODO: Show user detail
     }
 
     private fun showSelectedTask(task: ListProjectTasksItem, viewHolder: RecyclerView.ViewHolder) {
-        val detailProjectIntent = Intent(this, DetailTaskActivity::class.java).apply {
+        val detailTaskIntent = Intent(this, DetailTaskActivity::class.java).apply {
             putExtra(DetailTaskActivity.EXTRA_TASK_ID, task.id)
             putExtra(DetailTaskActivity.EXTRA_TASK_NAME, task.name)
             putExtra(DetailTaskActivity.EXTRA_TASK_DESCRIPTION, task.description)
-            putExtra(DetailTaskActivity.EXTRA_TASK_DEADLINE, task.endDate)
-            putExtra(DetailTaskActivity.EXTRA_TASK_PRIORITY, "Null")
+            putExtra(DetailTaskActivity.EXTRA_TASK_STATUS, task.status)
+            putExtra(DetailTaskActivity.EXTRA_TASK_START_DATE, task.startDate)
+            putExtra(DetailTaskActivity.EXTRA_TASK_END_DATE, task.endDate)
+            putExtra(DetailTaskActivity.EXTRA_TASK_PRIORITY, task.priority)
             putExtra(DetailTaskActivity.EXTRA_PROJECT_ID, task.projectId)
         }
-        startActivity(detailProjectIntent)
+        startActivity(detailTaskIntent)
     }
 
     private fun checkIfDataLoaded() {
@@ -278,16 +323,16 @@ class DetailProjectActivity : AppCompatActivity() {
     }
 
     private fun showDeleteConfirmationDialog() {
-        AlertDialog.Builder(this).apply {
-            setTitle("Delete Project")
-            setMessage("Are you sure you want to delete this project?")
-            setPositiveButton("Yes") { _, _ ->
+        alertConfirmDialog(
+            context = this,
+            layoutInflater = layoutInflater,
+            onYesClicked = {
                 deleteProject()
-            }
-            setNegativeButton("No", null)
-            create()
-            show()
-        }
+            },
+            title = "Delete Project",
+            message = "Are you sure you want to delete this project?",
+            icons = "error"
+        )
     }
 
     private fun deleteProject() {
@@ -297,13 +342,29 @@ class DetailProjectActivity : AppCompatActivity() {
                 is ResultState.Loading -> showLoading(true)
                 is ResultState.Success -> {
                     showLoading(false)
-                    showToast(result.data.message.toString())
-                    finish()
+                    alertInfoDialogWithEvent(
+                        context = this,
+                        layoutInflater = layoutInflater,
+                        onOkClicked = {
+                            finish()
+                        },
+                        title = "Delete Project",
+                        message = "Project deleted successfully",
+                        icons = "success"
+                    )
+                    Log.i("DetailProjectActivity", "Project deleted successfully, ${result.data.message}")
                 }
 
                 is ResultState.Error -> {
                     showLoading(false)
-                    showToast("Failed to delete project: ${result.error}")
+                    alertInfoDialog(
+                        context = this,
+                        layoutInflater = layoutInflater,
+                        title = "Error",
+                        message = "Failed to delete project",
+                        icons = "error"
+                    )
+                    Log.e("DetailProjectActivity", "Failed to delete project: ${result.error}")
                 }
             }
         }
@@ -311,10 +372,6 @@ class DetailProjectActivity : AppCompatActivity() {
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     @Deprecated("Deprecated in Java")

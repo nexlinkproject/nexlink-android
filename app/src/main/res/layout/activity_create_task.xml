@@ -148,59 +148,13 @@
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
-            <!-- Assign To Section -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/opensans_bold"
-                    android:text="@string/txt_assign_to"
-                    android:textColor="@color/black"
-                    android:textSize="20sp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_add_user"
-                    style="@style/Widget.App.Button.WithIcon.AddButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/add" />
-            </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_user"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:clipToPadding="false"
-                android:padding="8dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-            <TextView
-                android:id="@+id/tv_no_task"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/opensans_regular"
-                android:gravity="center"
-                android:text="@string/txt_task_have_not_been_added_yet"
-                android:textColor="@color/paragraf"
-                android:textSize="14sp"
-                android:visibility="gone"
-                android:layout_marginBottom="16dp"
-                tools:visibility="visible" />
-
             <!-- Save Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_save"
                 style="@style/Widget.App.Button.WithIcon.Save"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/txt_save" />
         </LinearLayout>
     </ScrollView>

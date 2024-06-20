@@ -127,7 +127,6 @@
         <item name="iconGravity">textStart</item>
         <item name="iconEndPadding">8dp</item>
         <item name="icon">@drawable/ic_google</item>
-        <item name="iconTint">@color/primary_main</item>
         <item name="backgroundTint">@color/white</item>
         <item name="android:textColor">@color/primary_main</item>
     </style>
@@ -164,5 +163,14 @@
     <style name="CircleImageView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- Custom AlertDialog Style -->
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.5</item>
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
     </style>
 </resources>

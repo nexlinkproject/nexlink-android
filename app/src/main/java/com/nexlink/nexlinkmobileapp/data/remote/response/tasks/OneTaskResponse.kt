@@ -23,7 +23,7 @@ data class TaskItem(
 	val endDate: String? = null,
 
 	@field:SerializedName("ProjectId")
-	val projectId: Int? = null,
+	val projectId: String? = null,
 
 	@field:SerializedName("description")
 	val description: String? = null,
@@ -39,6 +39,9 @@ data class TaskItem(
 
 	@field:SerializedName("status")
 	val status: String? = null,
+
+	@field:SerializedName("priority")
+	val priority: String? = null,
 
 	@field:SerializedName("updatedAt")
 	val updatedAt: String? = null

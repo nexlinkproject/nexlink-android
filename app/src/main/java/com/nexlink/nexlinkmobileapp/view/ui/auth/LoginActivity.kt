@@ -3,10 +3,8 @@ package com.nexlink.nexlinkmobileapp.view.ui.auth
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -16,6 +14,7 @@ import com.nexlink.nexlinkmobileapp.data.local.pref.UserModel
 import com.nexlink.nexlinkmobileapp.databinding.ActivityLoginBinding
 import com.nexlink.nexlinkmobileapp.view.factory.AuthModelFactory
 import com.nexlink.nexlinkmobileapp.view.ui.main.MainActivity
+import com.nexlink.nexlinkmobileapp.view.utils.alertInfoDialog
 
 class LoginActivity : AppCompatActivity() {
 
@@ -51,7 +50,13 @@ class LoginActivity : AppCompatActivity() {
         val password = binding.tfPassword.text.toString()
 
         if (email.isEmpty() || password.isEmpty()) {
-            showToast("Email dan password tidak boleh kosong.")
+            alertInfoDialog(
+                context = this,
+                layoutInflater = layoutInflater,
+                title = "Invalid Input",
+                message = "Email and password cannot be empty",
+                icons = "warning"
+            )
             return
         }
 
@@ -75,33 +80,22 @@ class LoginActivity : AppCompatActivity() {
                             )
                         }
 
-                        AlertDialog.Builder(this).apply {
-                            setTitle("Login Success")
-                            setMessage(getString(R.string.alert_login_success))
-                            setPositiveButton("Masuk") { _, _ ->
-                                val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                                intent.flags =
-                                    Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                                startActivity(intent)
-                                finish()
-                            }
-                            create()
-                            show()
-                        }
+                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                        startActivity(intent)
+                        finish()
                     }
 
                     is ResultState.Error -> {
                         showLoading(false)
-                        AlertDialog.Builder(this).apply {
-                            setTitle("Login Failed")
-                            setMessage(getString(R.string.wrong_email_and_password))
-                            setPositiveButton("OK") { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                            create()
-                            show()
-                            println(result.error)
-                        }
+                        alertInfoDialog(
+                            context = this,
+                            layoutInflater = layoutInflater,
+                            title = "Login Failed",
+                            message = getString(R.string.wrong_email_and_password),
+                            icons = "error"
+                        )
                     }
                 }
             }
@@ -110,9 +104,5 @@ class LoginActivity : AppCompatActivity() {
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

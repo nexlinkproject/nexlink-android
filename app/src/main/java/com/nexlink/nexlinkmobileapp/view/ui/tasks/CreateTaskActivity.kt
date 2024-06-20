@@ -1,18 +1,21 @@
 package com.nexlink.nexlinkmobileapp.view.ui.tasks
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.nexlink.nexlinkmobileapp.R
 import com.nexlink.nexlinkmobileapp.data.ResultState
 import com.nexlink.nexlinkmobileapp.databinding.ActivityCreateTaskBinding
 import com.nexlink.nexlinkmobileapp.view.factory.TasksModelFactory
+import com.nexlink.nexlinkmobileapp.view.utils.alertConfirmDialog
+import com.nexlink.nexlinkmobileapp.view.utils.alertInfoDialog
+import com.nexlink.nexlinkmobileapp.view.utils.alertInfoDialogWithEvent
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -37,6 +40,7 @@ class CreateTaskActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
+        // Set up button listeners
         binding.toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
@@ -84,39 +88,70 @@ class CreateTaskActivity : AppCompatActivity() {
         val projectId = intent.getStringExtra(EXTRA_PROJECT_ID) ?: ""
 
         if (name.isEmpty() || description.isEmpty() || startDate.isEmpty() || endDate.isEmpty() || priority.isEmpty()) {
-            showToast("Please fill in all fields")
+            alertInfoDialog(
+                context = this,
+                layoutInflater = layoutInflater,
+                title = "Invalid Input",
+                message = "Please fill all fields",
+                icons = "info"
+            )
             return
         }
 
+        // Konfirmasi sebelum menyimpan proyek
+        alertConfirmDialog(
+            context = this,
+            layoutInflater = layoutInflater,
+            onYesClicked = {
+                saveTask(name, description, status, startDate, endDate, priority, projectId)
+            },
+            title = "Confirm Save",
+            message = "Are you sure the data is correct and you want to save the Task?",
+            icons = "info"
+        )
+    }
+
+    private fun saveTask(name: String, description: String, status: String, startDate: String, endDate: String, priority: String, projectId: String){
         tasksViewModel.createTask(name, description, status, startDate, endDate, priority, projectId).observe(this) { result ->
             when (result) {
                 is ResultState.Loading -> showLoading(true)
                 is ResultState.Success -> {
                     showLoading(false)
-                    AlertDialog.Builder(this).apply {
-                        setTitle("Save Task")
-                        setMessage("Task saved successfully!")
-                        setPositiveButton("Next") { _, _ ->
-                            val project = result.data.data?.task
-                            if (project != null) {
-                                setResult(RESULT_OK)
+                    alertInfoDialogWithEvent(
+                        context = this,
+                        layoutInflater = layoutInflater,
+                        onOkClicked = {
+                            val task = result.data.data?.task
+                            if (task != null) {
+                                val addTaskUserIntent = Intent(this@CreateTaskActivity, AddUserTaskActivity::class.java).apply {
+                                    putExtra(AddUserTaskActivity.EXTRA_TASK_ID, task.id)
+                                    putExtra(AddUserTaskActivity.EXTRA_TASK_NAME, task.name)
+                                    putExtra(AddUserTaskActivity.EXTRA_TASK_DESCRIPTION, task.description)
+                                    putExtra(AddUserTaskActivity.EXTRA_TASK_PRIORITY, task.priority)
+                                    putExtra(AddUserTaskActivity.EXTRA_TASK_DEADLINE, task.endDate)
+                                    putExtra(AddUserTaskActivity.EXTRA_PROJECT_ID, projectId)
+                                }
+                                startActivity(addTaskUserIntent)
                                 finish()
                             }
-                        }
-                        create()
-                        show()
-                    }
+                        },
+                        title = "Save Task",
+                        message = "Task $name has been saved. Let's add user to task.",
+                        icons = "success"
+                    )
+                    Log.i("CreateTaskActivity", "create task success: ${result.data.data?.task}")
                 }
 
                 is ResultState.Error -> {
                     showLoading(false)
-                    AlertDialog.Builder(this).apply {
-                        setTitle("Error")
-                        setMessage("Failed to save task: ${result.error}")
-                        setPositiveButton("OK", null)
-                        create()
-                        show()
-                    }
+                    alertInfoDialog(
+                        context = this,
+                        layoutInflater = layoutInflater,
+                        title = "Error",
+                        message = "Failed to save task",
+                        icons = "error"
+                    )
+                    Log.e("CreateTaskActivity", "create task error: ${result.error}")
                 }
             }
         }
@@ -124,10 +159,6 @@ class CreateTaskActivity : AppCompatActivity() {
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun showDatePicker(onDateSelected: (Date) -> Unit) {

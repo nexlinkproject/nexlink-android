@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -15,10 +14,18 @@ import com.nexlink.nexlinkmobileapp.data.remote.response.projects.ListProjectUse
 import com.nexlink.nexlinkmobileapp.databinding.ActivityAddTeammatesAndTaskBinding
 import com.nexlink.nexlinkmobileapp.view.adapter.ProjectTasksAdapter
 import com.nexlink.nexlinkmobileapp.view.adapter.ProjectUsersAdapter
+import com.nexlink.nexlinkmobileapp.view.factory.AuthModelFactory
 import com.nexlink.nexlinkmobileapp.view.factory.ProjectsModelFactory
+import com.nexlink.nexlinkmobileapp.view.factory.UsersModelFactory
+import com.nexlink.nexlinkmobileapp.view.ui.auth.AuthViewModel
 import com.nexlink.nexlinkmobileapp.view.ui.projects.ProjectsViewModel
 import com.nexlink.nexlinkmobileapp.view.ui.tasks.CreateTaskActivity
 import com.nexlink.nexlinkmobileapp.view.ui.tasks.DetailTaskActivity
+import com.nexlink.nexlinkmobileapp.view.ui.users.SearchUserActivity
+import com.nexlink.nexlinkmobileapp.view.ui.users.UsersViewModel
+import com.nexlink.nexlinkmobileapp.view.utils.alertConfirmDialog
+import com.nexlink.nexlinkmobileapp.view.utils.alertInfoDialog
+import com.nexlink.nexlinkmobileapp.view.utils.alertInfoDialogWithEvent
 import com.nexlink.nexlinkmobileapp.view.utils.formatDate
 
 class AddTeammatesAndTaskActivity : AppCompatActivity() {
@@ -35,6 +42,14 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
         ProjectsModelFactory.getInstance(this)
     }
 
+    private val usersViewModel by viewModels<UsersViewModel> {
+        UsersModelFactory.getInstance(this)
+    }
+
+    private val authViewModel by viewModels<AuthViewModel> {
+        AuthModelFactory.getInstance(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -44,23 +59,22 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
 
         // Set up toolbar
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-
-        binding.toolbar.setNavigationOnClickListener {
-            onBackPressed()
-        }
 
         // Set up buttons click listeners
         binding.btnAddTeammate.setOnClickListener {
-            println("Add teammate")
+            val searchUserIntent = Intent(this, SearchUserActivity::class.java).apply {
+                putExtra(SearchUserActivity.EXTRA_PROJECT_ID, intent.getStringExtra(EXTRA_PROJECT_ID))
+                putExtra(SearchUserActivity.EXTRA_USER_ADD_TYPE, "project")
+            }
+            startActivityForResult(searchUserIntent, REQUEST_ADD_TEAMMATES)
         }
 
         binding.btnAddTask.setOnClickListener {
             val detailProjectIntent = Intent(this@AddTeammatesAndTaskActivity, CreateTaskActivity::class.java).apply {
-                putExtra(CreateTaskActivity.EXTRA_PROJECT_ID, intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_ID))
+                putExtra(CreateTaskActivity.EXTRA_PROJECT_ID, intent.getStringExtra(EXTRA_PROJECT_ID))
             }
-//            startActivity(detailProjectIntent)
             startActivityForResult(detailProjectIntent, REQUEST_CREATE_TASK)
         }
 
@@ -69,7 +83,21 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
         }
 
         binding.btnSubmit.setOnClickListener {
-            println("Submit")
+            alertConfirmDialog(
+                context = this,
+                layoutInflater = layoutInflater,
+                onYesClicked = {
+                    finish()
+                },
+                title = "Confirm Project",
+                message = "Are you sure you want to submit this project?",
+                icons = "warning"
+            )
+        }
+
+        // save user to project
+        authViewModel.getSession().observe(this) { user ->
+            addUserToProject(user.userId)
         }
 
         setupRecyclerViews()
@@ -81,34 +109,86 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
         getDataTeammatesAndTasks()
     }
 
+    override fun onBackPressed() {
+        alertConfirmDialog(
+            context = this,
+            layoutInflater = layoutInflater,
+            onYesClicked = {
+                super.onBackPressed()
+            },
+            title = "Confirm Exit",
+            message = "Are you sure you want to leave this page? Your changes might not be saved.",
+            icons = "warning"
+        )
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CREATE_TASK && resultCode == RESULT_OK) {
-            // Refresh data tasks setelah kembali dari CreateTaskActivity
-            val projectId = intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_ID)
-            if (projectId != null) {
-                isTasksLoading = true
-                showLoading(true)
-                loadTasks(projectId)
+        when(requestCode) {
+            REQUEST_CREATE_TASK -> {
+                if (resultCode == RESULT_OK) {
+                    // Refresh data tasks setelah kembali dari CreateTaskActivity
+                    val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
+                    if (projectId != null) {
+                        isTasksLoading = true
+                        showLoading(true)
+                        loadTasks(projectId)
+                    }
+                }
+            }
+            REQUEST_ADD_TEAMMATES -> {
+                if (resultCode == RESULT_OK) {
+                    // Refresh data teammates setelah kembali dari SearchUserActivity
+                    val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
+                    if (projectId != null) {
+                        isTeammatesLoading = true
+                        showLoading(true)
+                        loadTeammates(projectId)
+                    }
+                }
             }
         }
     }
 
     private fun setupRecyclerViews() {
-        projectUsersAdapter = ProjectUsersAdapter()
+        projectUsersAdapter = ProjectUsersAdapter(showRemoveButton = true)
         binding.rvTeammates.adapter = projectUsersAdapter
 
         projectTasksAdapter = ProjectTasksAdapter()
         binding.rvTask.adapter = projectTasksAdapter
     }
 
+    private fun addUserToProject(userId: String) {
+        val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
+        if (projectId != null) {
+            usersViewModel.addUserToProject(userId, projectId).observe(this) { result ->
+                when (result) {
+                    is ResultState.Loading -> {
+                        showLoading(true)
+                    }
+                    is ResultState.Success -> {
+                        showLoading(false)
+                        // Refresh data teammates setelah menambahkan user ke project
+                        isTeammatesLoading = true
+                        showLoading(true)
+                        loadTeammates(projectId)
+                    }
+                    is ResultState.Error -> {
+                        showLoading(false)
+                        Log.e("AddTeamAndTaskActivity", "Failed to add user to project: ${result.error}")
+                    }
+                }
+            }
+        }
+    }
+
     private fun setupDataDetailProject() {
-        val projectName = intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_NAME)
-        val projectDescription = intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_DESCRIPTION)
+        val projectName = intent.getStringExtra(EXTRA_PROJECT_NAME)
+        val projectDescription = intent.getStringExtra(EXTRA_PROJECT_DESCRIPTION)
 
         val projectStartDate =
-            formatDate(intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_START_DATE).toString())
-        val projectEndDate = formatDate(intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_END_DATE).toString())
+            formatDate(intent.getStringExtra(EXTRA_PROJECT_START_DATE).toString())
+        val projectEndDate = formatDate(intent.getStringExtra(EXTRA_PROJECT_END_DATE).toString())
         val projectDate = "$projectStartDate - $projectEndDate"
 
         binding.tvProjectName.text = projectName
@@ -117,7 +197,7 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
     }
 
     private fun getDataTeammatesAndTasks(){
-        val projectId = intent.getStringExtra(AddTeammatesAndTaskActivity.EXTRA_PROJECT_ID)
+        val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
         if (projectId != null) {
             isTeammatesLoading = true
             isTasksLoading = true
@@ -155,6 +235,21 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
                                 )
                             }
                         })
+
+                        projectUsersAdapter.setOnRemoveButtonClickCallback(object : ProjectUsersAdapter.OnRemoveButtonClickCallback {
+                            override fun onRemoveButtonClicked(user: ListProjectUsersItem) {
+                                alertConfirmDialog(
+                                    context = this@AddTeammatesAndTaskActivity,
+                                    layoutInflater = layoutInflater,
+                                    onYesClicked = {
+                                        removeUserFromProject(user)
+                                    },
+                                    title = "Remove User",
+                                    message = "Are you sure you want to remove ${user.fullName} from the project?",
+                                    icons = "warning"
+                                )
+                            }
+                        })
                     }
 
                     isTeammatesLoading = false
@@ -164,10 +259,54 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
                 is ResultState.Error -> {
                     binding.rvTeammates.visibility = View.GONE
                     binding.tvNoTeammates.visibility = View.VISIBLE
-//                    showToast(result.error)
+
                     Log.e("AddTeamAndTaskActivity", "Failed to load teammates: ${result.error}")
                     isTeammatesLoading = false
                     checkIfDataLoaded()
+                }
+            }
+        }
+    }
+
+    private fun removeUserFromProject(user: ListProjectUsersItem) {
+        val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
+        if (projectId != null && user.id != null) {
+            usersViewModel.removeUserFromProject(user.id, projectId).observe(this) { result ->
+                when (result) {
+                    is ResultState.Loading -> showLoading(true)
+                    is ResultState.Success -> {
+                        val data = result.data.message
+                        if (data != null) {
+                            alertInfoDialogWithEvent(
+                                context = this,
+                                layoutInflater = layoutInflater,
+                                onOkClicked = {
+                                    // Refresh data teammates setelah remove user
+                                    isTeammatesLoading = true
+                                    showLoading(true)
+                                    loadTeammates(projectId)
+                                },
+                                title = "Remove User",
+                                message = "User ${user.fullName} removed from project successfully!",
+                                icons = "success"
+                            )
+
+                            Log.i("AddTeamAndTaskActivity", "User: ${user.fullName}, ${data}")
+                        }
+                        showLoading(false)
+                    }
+                    is ResultState.Error -> {
+                        showLoading(false)
+                        alertInfoDialog(
+                            context = this,
+                            layoutInflater = layoutInflater,
+                            title = "Error",
+                            message = "Failed to remove user ${user.fullName}",
+                            icons = "error"
+                        )
+
+                        Log.e("AddTeamAndTaskActivity", "Failed to remove user: ${result.error}")
+                    }
                 }
             }
         }
@@ -209,7 +348,7 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
                 is ResultState.Error -> {
                     binding.rvTask.visibility = View.GONE
                     binding.tvNoTask.visibility = View.VISIBLE
-//                    showToast(result.error)
+
                     Log.e("AddTeamAndTaskActivity", "Failed to load tasks: ${result.error}")
                     isTasksLoading = false
                     checkIfDataLoaded()
@@ -219,7 +358,7 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
     }
 
     private fun showSelectedUser(user: ListProjectUsersItem, viewHolder: RecyclerView.ViewHolder) {
-        showToast("User ${user.fullName} clicked")
+        // Todo: Show user detail
     }
 
     private fun showSelectedTask(task: ListProjectTasksItem, viewHolder: RecyclerView.ViewHolder) {
@@ -227,8 +366,10 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
             putExtra(DetailTaskActivity.EXTRA_TASK_ID, task.id)
             putExtra(DetailTaskActivity.EXTRA_TASK_NAME, task.name)
             putExtra(DetailTaskActivity.EXTRA_TASK_DESCRIPTION, task.description)
-            putExtra(DetailTaskActivity.EXTRA_TASK_DEADLINE, task.endDate)
-            putExtra(DetailTaskActivity.EXTRA_TASK_PRIORITY, "Null")
+            putExtra(DetailTaskActivity.EXTRA_TASK_STATUS, task.status)
+            putExtra(DetailTaskActivity.EXTRA_TASK_START_DATE, task.startDate)
+            putExtra(DetailTaskActivity.EXTRA_TASK_END_DATE, task.endDate)
+            putExtra(DetailTaskActivity.EXTRA_TASK_PRIORITY, task.priority)
             putExtra(DetailTaskActivity.EXTRA_PROJECT_ID, task.projectId)
         }
         startActivity(detailProjectIntent)
@@ -244,21 +385,14 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
-    }
-
     companion object {
         const val EXTRA_PROJECT_ID = "extra_project_id"
         const val EXTRA_PROJECT_NAME = "extra_project_name"
         const val EXTRA_PROJECT_DESCRIPTION = "extra_project_description"
+        const val EXTRA_PROJECT_STATUS = "extra_project_status"
         const val EXTRA_PROJECT_START_DATE = "extra_project_start_date"
         const val EXTRA_PROJECT_END_DATE = "extra_project_end_date"
         const val REQUEST_CREATE_TASK = 1
+        const val REQUEST_ADD_TEAMMATES = 1
     }
 }

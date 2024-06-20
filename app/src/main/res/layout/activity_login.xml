@@ -8,38 +8,85 @@
     android:background="@color/white"
     tools:context=".view.ui.auth.LoginActivity">
 
-    <!-- Thumbnail -->
-    <ImageView
-        android:id="@+id/iv_thumbnail"
+    <!-- Welcome Text -->
+    <TextView
+        android:id="@+id/tv_welcome_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"
-        android:src="@drawable/img_logo_nexlink" />
+        android:fontFamily="@font/opensans_bold"
+        android:text="Welcome Back to"
+        android:textColor="@color/black"
+        android:textSize="32sp" />
+
+    <!-- Nexlink Text -->
+    <TextView
+        android:id="@+id/tv_nexlink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_welcome_back"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/opensans_bold"
+        android:text="Nextlink"
+        android:textColor="@color/primary_main"
+        android:textSize="28sp" />
+
+    <!-- Vector Image -->
+    <ImageView
+        android:id="@+id/iv_vector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_nexlink"
+        android:layout_above="@id/tv_login_continue"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
+        android:src="@drawable/vector_login" />
+
+    <!-- Log in to continue text -->
+    <TextView
+        android:id="@+id/tv_login_continue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tv_optimizing_projects"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/opensans_regular"
+        android:text="Log in to continue planning and"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+    <!-- optimizing your projects text with different color -->
+    <TextView
+        android:id="@+id/tv_optimizing_projects"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/background_layout"
+        android:layout_marginBottom="16dp"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/opensans_bold"
+        android:text="optimizing your projects"
+        android:textColor="@color/primary_main"
+        android:textSize="16sp" />
 
     <!-- Background with rounded corners -->
     <LinearLayout
         android:id="@+id/background_layout"
         android:layout_width="match_parent"
-        android:layout_height="448dp"
-        android:layout_below="@id/iv_thumbnail"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="10dp"
         android:background="@drawable/background_rounded_login"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingHorizontal="16dp">
+        android:padding="16dp">
 
-        <!-- Welcome Text -->
+        <!-- Login Text -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:background="@color/purple_500"
             android:fontFamily="@font/opensans_bold"
             android:gravity="center"
-            android:padding="16dp"
-            android:text="@string/txt_welcome"
+            android:text="Login"
             android:textColor="@color/white"
             android:textSize="24sp" />
 
@@ -49,14 +96,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="@string/txt_email"
+            app:hintEnabled="false"
             app:startIconDrawable="@drawable/ic_email">
 
             <com.nexlink.nexlinkmobileapp.view.custom.TextInputEmail
                 android:id="@+id/tf_email"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress"
+                android:hint="@string/txt_email"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Password Input -->
@@ -65,7 +113,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="@string/txt_password"
+            app:hintEnabled="false"
             app:endIconMode="password_toggle"
             app:startIconDrawable="@drawable/ic_password">
 
@@ -73,6 +121,7 @@
                 android:id="@+id/tf_password"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:hint="@string/txt_password"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -81,7 +130,7 @@
             android:id="@+id/btn_login"
             style="@style/Widget.App.Button.Login"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:layout_marginBottom="16dp"
             android:text="@string/txt_login" />
 
@@ -97,9 +146,10 @@
             android:id="@+id/btn_login_google"
             style="@style/Widget.App.Button.LoginGoogle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:layout_marginBottom="16dp"
-            android:text="@string/txt_login_with_google" />
+            android:text="@string/txt_login_with_google"
+            app:iconTint="@null"/>
 
         <!-- Sign Up Text -->
         <TextView
@@ -110,7 +160,7 @@
             android:layout_marginBottom="16dp"
             android:fontFamily="@font/opensans_bold"
             android:gravity="center"
-            android:text="@string/txt_sign_up"
+            android:text="Don't have an account? Sign Up"
             android:textColor="@color/white" />
     </LinearLayout>
 
@@ -119,7 +169,7 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_centerInParent="true"
+        android:visibility="gone"
         tools:visibility="visible" />
 </RelativeLayout>

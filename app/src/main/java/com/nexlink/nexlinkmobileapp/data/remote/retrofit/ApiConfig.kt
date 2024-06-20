@@ -26,7 +26,7 @@ object ApiConfig {
             .addInterceptor(authInterceptor)
             .build()
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://nexlink-be-57s6wxqnvq-et.a.run.app/")
+            .baseUrl("https://nexlink-be-hby6xvshwq-et.a.run.app/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()

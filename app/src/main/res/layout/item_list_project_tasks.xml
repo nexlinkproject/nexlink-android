@@ -24,18 +24,31 @@
         android:text="Ongoing"
         android:textColor="@color/paragraf"
         android:textSize="14sp"
-        android:fontFamily="@font/opensans_regular" />
+        android:fontFamily="@font/opensans_semibold" />
 
-    <TextView
-        android:id="@+id/tv_task_date"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_below="@id/tv_task_status"
-        android:layout_marginTop="2dp"
-        android:text="30 Jan 2099"
-        android:textColor="@color/paragraf"
-        android:textSize="14sp"
-        android:fontFamily="@font/opensans_regular" />
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/iv_project_date_icon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_date_24dp"
+            android:layout_marginEnd="4dp" />
+
+        <TextView
+            android:id="@+id/tv_task_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Deadline"
+            android:textColor="@color/metadata"
+            android:textSize="14sp"
+            android:fontFamily="@font/opensans_regular" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_task_members"
@@ -48,7 +61,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="4dp"
-            android:src="@drawable/img_rectangle"
+            android:src="@drawable/img_avatar5"
             android:scaleType="centerCrop"
             android:background="@drawable/background_circle"
             android:padding="2dp"/>
@@ -57,7 +70,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="4dp"
-            android:src="@drawable/img_rectangle"
+            android:src="@drawable/img_avatar4"
             android:scaleType="centerCrop"
             android:background="@drawable/background_circle"
             android:padding="2dp" />
@@ -66,7 +79,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="4dp"
-            android:src="@drawable/img_rectangle"
+            android:src="@drawable/img_avatar1"
             android:scaleType="centerCrop"
             android:background="@drawable/background_circle"
             android:padding="2dp" />

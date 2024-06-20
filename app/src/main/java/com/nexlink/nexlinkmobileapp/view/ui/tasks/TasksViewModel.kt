@@ -6,6 +6,8 @@ import com.nexlink.nexlinkmobileapp.data.repository.TasksRepository
 class TasksViewModel(private val repository: TasksRepository) : ViewModel() {
     fun getTaskById(taskId: String) = repository.getTaskById(taskId)
 
+    fun getTaskUser(userId: String) = repository.getTaskUser(userId)
+
     fun createTask(
         name: String,
         description: String,
@@ -16,5 +18,16 @@ class TasksViewModel(private val repository: TasksRepository) : ViewModel() {
         projectId: String
     ) = repository.createTask(name, description, status, startDate, endDate, priority, projectId)
 
-//    fun deleteTask(taskId: String) = repository.deleteTask(taskId)
+    fun updateTask(
+        taskId: String,
+        name: String,
+        description: String,
+        status: String,
+        startDate: String,
+        endDate: String,
+        priority: String,
+        projectId: String
+    ) = repository.updateTask(taskId, name, description, status, startDate, endDate, priority, projectId)
+
+    fun deleteTask(taskId: String) = repository.deleteTask(taskId)
 }

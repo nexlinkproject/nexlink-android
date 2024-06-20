@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nexlink.nexlinkmobileapp.data.ResultState
@@ -60,7 +59,7 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
             if (isChecked) {
                 when (checkedId) {
                     binding.btnAllProject.id -> getAllProjects()
-                    binding.btnInProgress.id -> filterProjects("active")
+                    binding.btnInProgress.id -> filterProjects("in-progress")
                     binding.btnDone.id -> filterProjects("completed")
                 }
             }
@@ -72,11 +71,9 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
             getAllProjects()
         }
 
-        // Menampilkan semua project
+        // Setup recycler view
         val layoutManager = LinearLayoutManager(requireContext())
         binding.rvAllProjects.layoutManager = layoutManager
-        val itemDecoration = DividerItemDecoration(requireContext(), layoutManager.orientation)
-        binding.rvAllProjects.addItemDecoration(itemDecoration)
 
         // Mengambil data project
         getAllProjects()
@@ -125,10 +122,13 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
 
                 is ResultState.Error -> {
                     showLoading(false)
-                    showTimeout(true)
-//                    val message = result.error
-//                    showToast(message)
-                    showToast("Please check your internet connection")
+                    if (result.error == "timeout"){
+                        showTimeout(true)
+                        showToast("Please check your internet connection")
+                    }else{
+                        binding.rvAllProjects.visibility = View.GONE
+                        binding.tvNoDataProjects.visibility = View.VISIBLE
+                    }
                 }
             }
         }
@@ -173,6 +173,7 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
     }
 
     private fun showTimeout(isTimeout: Boolean) {
+        binding.tvNoDataProjects.visibility = View.GONE
         binding.rvAllProjects.visibility = if (isTimeout) View.GONE else View.VISIBLE
         binding.timeoutLayout.visibility = if (isTimeout) View.VISIBLE else View.GONE
     }
