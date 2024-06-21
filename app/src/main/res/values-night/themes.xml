@@ -1,9 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.NexlinkMobileApp" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.NexlinkMobileApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">@color/primary_main</item>
+        <item name="colorPrimaryVariant">@color/primary_secondary</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
@@ -12,5 +12,163 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:fontFamily">@font/opensans_regular</item>
+    </style>
+
+    <!-- Toolbar Style  -->
+    <style name="ToolbarStyle" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColorPrimary">@color/primary_main</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:fontFamily">@font/opensans_semibold</item>
+    </style>
+
+    <style name="ToolbarTitleStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@font/opensans_semibold</item>
+    </style>
+
+    <!-- TextInput Styles -->
+    <style name="Widget.App.TextInput.Outline" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="boxBackgroundColor">@android:color/white</item>
+        <item name="boxStrokeColor">@color/primary_main</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Widget.App.TextInput.WithIcon.SearchProject" parent="Widget.App.TextInput.Outline">
+        <item name="android:textColor">@color/metadata</item>
+        <item name="startIconDrawable">@drawable/ic_search_20dp</item>
+        <item name="endIconMode">custom</item>
+        <item name="endIconDrawable">@drawable/ic_sort_ascending</item>
+    </style>
+
+    <style name="Widget.App.TextInput.WithIcon.Date" parent="Widget.App.TextInput.Outline">
+        <item name="android:textColor">@color/metadata</item>
+        <item name="startIconDrawable">@drawable/ic_date_24dp</item>
+    </style>
+
+    <style name="Widget.App.TextInput.MultiLine" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="boxBackgroundColor">@android:color/white</item>
+        <item name="boxStrokeColor">@color/primary_main</item>
+        <item name="android:fontFamily">@font/opensans_regular</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- Button Styles -->
+    <style name="Widget.App.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="backgroundTint">@color/primary_main</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">@font/opensans_bold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Widget.App.Button.WithIcon.AddButton" parent="Widget.App.Button">
+        <item name="icon">@drawable/ic_plus_circle_24dp</item>
+        <item name="iconTint">@color/white</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">8dp</item>
+    </style>
+
+    <style name="Widget.App.Button.WithIcon.Save" parent="Widget.App.Button">
+        <item name="icon">@drawable/ic_save</item>
+        <item name="iconTint">@color/white</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">8dp</item>
+    </style>
+
+    <style name="Widget.App.Button.WithIcon.GenerateML" parent="Widget.App.Button">
+        <item name="icon">@drawable/ic_cpu</item>
+        <item name="iconTint">@color/white</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">8dp</item>
+        <item name="backgroundTint">@color/info_main</item>
+    </style>
+
+    <style name="Widget.App.Button.WithIcon.Delete" parent="Widget.App.Button">
+        <item name="icon">@drawable/ic_x_circle</item>
+        <item name="iconTint">@color/white</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">8dp</item>
+        <item name="backgroundTint">@color/danger_main</item>
+    </style>
+
+    <style name="Widget.App.Button.Login" parent="Widget.App.Button">
+        <item name="iconGravity">textStart</item>
+        <item name="iconEndPadding">8dp</item>
+        <item name="icon">@drawable/ic_log_in</item>
+        <item name="iconTint">@color/primary_main</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/primary_main</item>
+    </style>
+
+    <style name="Widget.App.Button.SignUp" parent="Widget.App.Button">
+        <item name="iconGravity">textStart</item>
+        <item name="iconEndPadding">8dp</item>
+        <item name="icon">@drawable/ic_user_plus</item>
+        <item name="iconTint">@color/primary_main</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/primary_main</item>
+    </style>
+
+    <style name="Widget.App.Button.LoginGoogle" parent="Widget.App.Button">
+        <item name="iconGravity">textStart</item>
+        <item name="iconEndPadding">8dp</item>
+        <item name="icon">@drawable/ic_google</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/primary_main</item>
+    </style>
+
+    <style name="Widget.App.Button.Profile" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="iconTint">@color/primary_main</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">8dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/primary_main</item>
+    </style>
+
+    <style name="Widget.App.Button.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+
+    <!-- Toggle Button Styles -->
+    <style name="Widget.App.ToggleButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="backgroundTint">@color/toggle_button_background</item>
+        <item name="android:textColor">@color/toggle_button_text</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="strokeColor">@color/toggle_button_stroke</item>
+    </style>
+
+    <!-- Circle ImageView Style -->
+    <style name="CircleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- Custom AlertDialog Style -->
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.5</item>
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
     </style>
 </resources>

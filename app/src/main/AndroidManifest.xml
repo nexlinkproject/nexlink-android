@@ -15,6 +15,9 @@
         android:theme="@style/Theme.NexlinkMobileApp"
         tools:targetApi="31">
         <activity
+            android:name=".view.ui.chats.ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.ui.tasks.EditTaskActivity"
             android:exported="false" />
         <activity

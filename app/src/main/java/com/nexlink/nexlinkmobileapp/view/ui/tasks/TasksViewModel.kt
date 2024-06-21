@@ -29,5 +29,7 @@ class TasksViewModel(private val repository: TasksRepository) : ViewModel() {
         projectId: String
     ) = repository.updateTask(taskId, name, description, status, startDate, endDate, priority, projectId)
 
+    fun updateTaskPartial(taskId: String, fields: Map<String, Any>) = repository.updateTaskPartial(taskId, fields)
+
     fun deleteTask(taskId: String) = repository.deleteTask(taskId)
 }

@@ -290,8 +290,7 @@ class DetailTaskActivity : AppCompatActivity() {
         val name = intent.getStringExtra(EXTRA_TASK_NAME)
         val description = intent.getStringExtra(EXTRA_TASK_DESCRIPTION)
         val startDate = intent.getStringExtra(EXTRA_TASK_START_DATE)
-//        val endDate = intent.getStringExtra(EXTRA_TASK_END_DATE)
-        val endDate = "2099-01-01T00:00:00.000Z"
+        val endDate = intent.getStringExtra(EXTRA_TASK_END_DATE)
         val priority = intent.getStringExtra(EXTRA_TASK_PRIORITY)
         val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
 

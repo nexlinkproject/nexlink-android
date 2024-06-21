@@ -74,7 +74,7 @@ class SearchUserActivity : AppCompatActivity() {
             }
             "tasks" -> {
                 println("Task")
-                projectUsersAdapter = ProjectUsersAdapter(showRemoveButton = true)
+                projectUsersAdapter = ProjectUsersAdapter(showRemoveButton = false)
                 binding.rvUser.adapter = projectUsersAdapter
                 setupProjectSearchView()
                 loadAllProjectUsers()

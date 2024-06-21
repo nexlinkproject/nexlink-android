@@ -6,6 +6,8 @@ import com.nexlink.nexlinkmobileapp.data.remote.request.projects.CreateProjectRe
 import com.nexlink.nexlinkmobileapp.data.remote.request.tasks.CreateTasksRequest
 import com.nexlink.nexlinkmobileapp.data.remote.response.auth.LoginResponse
 import com.nexlink.nexlinkmobileapp.data.remote.response.auth.SignUpResponse
+import com.nexlink.nexlinkmobileapp.data.remote.response.ml.FeedbackResponse
+import com.nexlink.nexlinkmobileapp.data.remote.response.ml.ScheduleResponse
 import com.nexlink.nexlinkmobileapp.data.remote.response.projects.AllProjectsResponse
 import com.nexlink.nexlinkmobileapp.data.remote.response.projects.DeleteProjectResponse
 import com.nexlink.nexlinkmobileapp.data.remote.response.projects.GetProjectTasksResponse
@@ -50,6 +52,11 @@ interface ApiService {
     suspend fun getProjects(
         @Query("status") status: String? = null,
     ): AllProjectsResponse
+
+//    @GET("projects")
+//    suspend fun getProjectsWithUserId(
+//        @Query("status") status: String? = null,
+//    ): AllProjectsResponse
 
     @GET("projects/{projectId}")
     suspend fun getProjectById(
@@ -148,8 +155,28 @@ interface ApiService {
         @Body task: CreateTasksRequest
     ): UpdateTaskResponse
 
+    @Headers("Content-Type: application/json")
+    @PUT("tasks/{taskId}")
+    suspend fun updateTaskPartial(
+        @Path("taskId") taskId: String,
+        @Body fields: Map<String, @JvmSuppressWildcards Any>
+    ): UpdateTaskResponse
+
     @GET("tasks/{taskId}/users") // masih belum tau endpointnya
     suspend fun getTaskUsers(
         @Path("taskId") taskId: String,
     ): GetTaskUsersResponse // masih belum tau response nya
+
+    // ======= MACHINE LEARNING =======
+    @Headers("Content-Type: application/json")
+    @POST("tasks/schedule/{projectId}")
+    suspend fun scheduleML(
+        @Path("projectId") projectId: String,
+    ): ScheduleResponse
+
+    @Headers("Content-Type: application/json")
+    @POST("tasks/feedback/{projectId}")
+    suspend fun feedbackML(
+        @Path("projectId") projectId: String,
+    ): FeedbackResponse
 }

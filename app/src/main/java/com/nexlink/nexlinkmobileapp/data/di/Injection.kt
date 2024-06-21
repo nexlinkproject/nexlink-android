@@ -5,6 +5,7 @@ import com.nexlink.nexlinkmobileapp.data.local.pref.UserPreference
 import com.nexlink.nexlinkmobileapp.data.local.pref.dataStore
 import com.nexlink.nexlinkmobileapp.data.remote.retrofit.ApiConfig
 import com.nexlink.nexlinkmobileapp.data.repository.AuthRepository
+import com.nexlink.nexlinkmobileapp.data.repository.MLRepository
 import com.nexlink.nexlinkmobileapp.data.repository.ProjectsRepository
 import com.nexlink.nexlinkmobileapp.data.repository.TasksRepository
 import com.nexlink.nexlinkmobileapp.data.repository.UsersRepository
@@ -38,5 +39,12 @@ object Injection {
         val user = runBlocking { userPreference.getSession().first() }
         val apiService = ApiConfig.getApiService(user.accessToken)
         return TasksRepository.getInstance(apiService)
+    }
+
+    fun provideMLRepository(context: Context): MLRepository {
+        val userPreference = UserPreference.getInstance(context.dataStore)
+        val user = runBlocking { userPreference.getSession().first() }
+        val apiService = ApiConfig.getApiService(user.accessToken)
+        return MLRepository.getInstance(apiService)
     }
 }

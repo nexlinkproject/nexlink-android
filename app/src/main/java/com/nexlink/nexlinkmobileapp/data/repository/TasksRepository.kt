@@ -98,6 +98,17 @@ class TasksRepository private constructor(
         }
     }
 
+    fun updateTaskPartial(taskId: String, fields: Map<String, Any>) = liveData {
+        emit(ResultState.Loading)
+
+        try {
+            val successResponse = tasksApiService.updateTaskPartial(taskId, fields)
+            emit(ResultState.Success(successResponse))
+        } catch (e: Exception) {
+            emit(ResultState.Error(e.message.toString()))
+        }
+    }
+
     fun deleteTask(taskId: String) = liveData {
         emit(ResultState.Loading)
 
