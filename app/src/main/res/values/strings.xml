@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NexlinkMobileApp</string>
+    <string name="app_name">Nexlink</string>
     <string name="title_appbar">Title Appbar</string>
     <string name="title_home">Home</string>
     <string name="title_chats">Chats</string>
@@ -84,4 +84,5 @@
     <string name="txt_add_user_task">Add User Task</string>
     <string name="txt_user_have_not_been_added_yet">User have not been added yet</string>
     <string name="txt_tasks_not_found">No Data Tasks Found, Please Add Task First</string>
+    <string name="txt_update_profile">Update Profile</string>
 </resources>

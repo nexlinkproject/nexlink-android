@@ -37,6 +37,12 @@ data class User(
 	@field:SerializedName("email")
 	val email: String? = null,
 
+	@field:SerializedName("signedByGoogle")
+	val signedByGoogle: String? = null,
+
+	@field:SerializedName("profilePicture")
+	val profilePicture: String? = null,
+
 	@field:SerializedName("username")
 	val username: String? = null,
 

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layoutDescription="@xml/activity_onboard_scene"
+    tools:context=".view.ui.onboard.OnboardActivity">
+
+    <!--  TAMPILAN MENU 1  -->
+    <ImageView
+        android:id="@+id/title_onboard1"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_marginTop="36dp"
+        android:src="@drawable/title_onboard1"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/vector_onboard1"
+        android:layout_width="344dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/vector_onboard1"
+        app:layout_constraintTop_toBottomOf="@+id/title_onboard1"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <!--  TAMPILAN MENU 2  -->
+    <ImageView
+        android:id="@+id/teks_onboard1"
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:layout_marginBottom="64dp"
+        android:src="@drawable/teks_onboard1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="14dp" />
+
+    <ImageView
+        android:id="@+id/title_onboard2"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="36dp"
+        android:src="@drawable/title_onboard2"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/vector_onboard2"
+        android:layout_width="344dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/vector_onboard2"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_onboard2" />
+
+    <ImageView
+        android:id="@+id/teks_onboard2"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginBottom="60dp"
+        android:src="@drawable/teks_onboard2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="parent" />
+
+    <!--  TAMPILAN MENU 3  -->
+    <ImageView
+        android:id="@+id/title_onboard3"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="36dp"
+        android:src="@drawable/title_onboard3"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="411dp" />
+
+    <ImageView
+        android:id="@+id/vector_onboard3"
+        android:layout_width="344dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/vector_onboard3"
+        app:layout_constraintTop_toBottomOf="@+id/title_onboard3"
+        tools:layout_editor_absoluteX="411dp" />
+
+    <ImageView
+        android:id="@+id/teks_onboard3"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginBottom="60dp"
+        android:src="@drawable/teks_onboard3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="parent" />
+
+    <!--  Lingkaran menu-menu  -->
+    <LinearLayout
+        android:id="@+id/dots_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/opensans_semibold"
+            android:text="Slide to the right"/>
+
+    </LinearLayout>
+</androidx.constraintlayout.motion.widget.MotionLayout>

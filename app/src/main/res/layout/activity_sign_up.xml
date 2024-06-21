@@ -92,7 +92,7 @@
                 android:id="@+id/tf_name"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:inputType="textEmailAddress"
+                android:inputType="text"
                 android:hint="@string/txt_fulle_name"/>
         </com.google.android.material.textfield.TextInputLayout>
 

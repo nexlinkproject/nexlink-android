@@ -21,6 +21,8 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
+    private var userId: String? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -31,10 +33,13 @@ class ProfileFragment : Fragment() {
 
         authViewModel.getSession().observe(viewLifecycleOwner) { user ->
             binding.tvProfileName.text = user.fullName
+            userId = user.userId
         }
 
         binding.btnProfile.setOnClickListener {
-            val intent = Intent(requireContext(), EditProfileActivity::class.java)
+            val intent = Intent(requireContext(), EditProfileActivity::class.java).apply {
+                putExtra(EditProfileActivity.EXTRA_USER_ID, userId)
+            }
             startActivity(intent)
         }
 

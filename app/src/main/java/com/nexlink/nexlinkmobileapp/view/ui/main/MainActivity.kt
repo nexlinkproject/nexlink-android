@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.findNavController
@@ -20,6 +19,7 @@ import com.nexlink.nexlinkmobileapp.view.factory.UsersModelFactory
 import com.nexlink.nexlinkmobileapp.view.ui.auth.AuthViewModel
 import com.nexlink.nexlinkmobileapp.view.ui.auth.LoginActivity
 import com.nexlink.nexlinkmobileapp.view.ui.users.UsersViewModel
+import com.nexlink.nexlinkmobileapp.view.utils.alertInfoDialogWithEvent
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,17 +55,18 @@ class MainActivity : AppCompatActivity() {
                         }
                         is ResultState.Error -> {
                             showLoading(false)
-                            AlertDialog.Builder(this).apply {
-                                setTitle("Session Expired")
-                                setMessage("Your session has expired. Please login again.")
-                                setPositiveButton("Ok") { _, _ ->
+                            alertInfoDialogWithEvent(
+                                context = this,
+                                layoutInflater = layoutInflater,
+                                onOkClicked = {
                                     authViewModel.logout()
-                                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                                    startActivity(Intent(this, LoginActivity::class.java))
                                     finish()
-                                }
-                                create()
-                                show()
-                            }
+                                },
+                                title = "Session Expired",
+                                message = "Your session has expired. Please login again.",
+                                icons = "warning"
+                            )
 
                             Log.i("MainActivity", "User not found, Error : ${result.error}")
                         }
