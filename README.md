@@ -8,12 +8,13 @@
 | Task 3 | Setup Architecture | Setup Api Config and Api Service |    Add Some Features    |           Fix Bugs            |
 
 ## UI Design System
-<img width="842" alt="Screenshot 2024-06-21 at 16 57 34" src="https://github.com/nexlinkproject/nexlink-android/assets/78454287/27aa843f-0afa-46c5-9575-e572d3daa0a4">
+<img width="800" alt="Nexlink Design System" src="https://github.com/nexlinkproject/nexlink-android/assets/78454287/27aa843f-0afa-46c5-9575-e572d3daa0a4">
 
 
 ## Android Architecture
 - MVVM Architecture
-  ![Nexlink Architecture](https://github.com/nexlinkproject/nexlink-android/assets/78454287/f11ff4c4-8313-4013-be29-14f87d7da691)
+<img width="800" alt="Nexlink Architecture" src="https://github.com/nexlinkproject/nexlink-android/assets/78454287/0371ba27-e7a9-4787-866a-a6c5c9aeb35e">
+
 
 
 ## Our Features
