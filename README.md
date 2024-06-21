@@ -9,6 +9,8 @@
 
 ## Android Architecture
 - MVVM Architecture
+  ![image](https://github.com/nexlinkproject/nexlink-android/assets/78454287/f11ff4c4-8313-4013-be29-14f87d7da691)
+
 
 ## Our Features
 - OnBoarding Page
