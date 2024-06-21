@@ -7,9 +7,13 @@
 | Task 2 |   Create Concept   |       Authentication Page        |     Diagnose Pages      |         User Testing          | 
 | Task 3 | Setup Architecture | Setup Api Config and Api Service |    Add Some Features    |           Fix Bugs            |
 
+## UI Design System
+<img width="842" alt="Screenshot 2024-06-21 at 16 57 34" src="https://github.com/nexlinkproject/nexlink-android/assets/78454287/27aa843f-0afa-46c5-9575-e572d3daa0a4">
+
+
 ## Android Architecture
 - MVVM Architecture
-  ![image](https://github.com/nexlinkproject/nexlink-android/assets/78454287/f11ff4c4-8313-4013-be29-14f87d7da691)
+  ![Nexlink Architecture](https://github.com/nexlinkproject/nexlink-android/assets/78454287/f11ff4c4-8313-4013-be29-14f87d7da691)
 
 
 ## Our Features
