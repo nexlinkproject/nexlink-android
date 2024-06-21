@@ -6,9 +6,12 @@ import com.nexlink.nexlinkmobileapp.data.repository.ProjectsRepository
 class ProjectsViewModel(private val repository: ProjectsRepository) : ViewModel() {
     fun getProjects(status: String? = null) = repository.getProjects(status)
 
+    fun getProjectsByUserId(userId: String, status: String? = null, date: String? = null) =
+        repository.getProjectsByUserId(userId, status, date)
+
     fun getProjectById(projectId: String) = repository.getProjectById(projectId)
 
-    fun getProjecUsers(projectId: String) = repository.getProjecUsers(projectId)
+    fun getProjectUsers(projectId: String) = repository.getProjectUsers(projectId)
 
     fun getProjectTasks(projectId: String) = repository.getProjectTasks(projectId)
 

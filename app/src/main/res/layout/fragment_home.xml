@@ -128,7 +128,7 @@
         app:layout_constraintTop_toBottomOf="@+id/btn_group_project_filter" />
 
     <TextView
-        android:id="@+id/tv_no_data_projects"
+        android:id="@+id/tv_no_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"

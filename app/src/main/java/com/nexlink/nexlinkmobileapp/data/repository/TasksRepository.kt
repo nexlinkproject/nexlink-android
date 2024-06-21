@@ -19,6 +19,17 @@ class TasksRepository private constructor(
         }
     }
 
+    fun getTasksByUserId(userId: String, status: String? = null, date: String? = null) = liveData {
+        emit(ResultState.Loading)
+
+        try {
+            val successResponse = tasksApiService.getTasksByUserId(userId, status, date)
+            emit(ResultState.Success(successResponse))
+        } catch (e: Exception) {
+            emit(ResultState.Error(e.message.toString()))
+        }
+    }
+
     fun getTaskUser(userId: String) = liveData {
         emit(ResultState.Loading)
 

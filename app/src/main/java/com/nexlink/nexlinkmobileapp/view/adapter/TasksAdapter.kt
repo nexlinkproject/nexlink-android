@@ -7,34 +7,34 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.nexlink.nexlinkmobileapp.R
-import com.nexlink.nexlinkmobileapp.data.remote.response.projects.ListProjectTasksItem
+import com.nexlink.nexlinkmobileapp.data.remote.response.tasks.ListAllTasksItem
 import com.nexlink.nexlinkmobileapp.databinding.ItemListProjectTasksBinding
 import com.nexlink.nexlinkmobileapp.view.utils.formatDate
 
-class ProjectTasksAdapter :
-    ListAdapter<ListProjectTasksItem, ProjectTasksAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class TasksAdapter :
+    ListAdapter<ListAllTasksItem, TasksAdapter.MyViewHolder>(DIFF_CALLBACK) {
     private lateinit var onItemClickCallback: OnItemClickCallback
+
     fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
         this.onItemClickCallback = onItemClickCallback
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val binding =
-            ItemListProjectTasksBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemListProjectTasksBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MyViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val review = getItem(position)
-        holder.bind(review)
+        val user = getItem(position)
+        holder.bind(user)
         holder.itemView.setOnClickListener {
-            onItemClickCallback.onItemClicked(review)
+            onItemClickCallback.onItemClicked(user)
         }
     }
 
-    class MyViewHolder(private val binding: ItemListProjectTasksBinding) :
+    class MyViewHolder(val binding: ItemListProjectTasksBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(task: ListProjectTasksItem) {
+        fun bind(task: ListAllTasksItem) {
             binding.tvTaskName.text = "${task.name}"
             binding.tvTaskDate.text = formatDate(task.startDate.toString()) + " - " + formatDate(task.endDate.toString())
 
@@ -62,17 +62,17 @@ class ProjectTasksAdapter :
     }
 
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListProjectTasksItem>() {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListAllTasksItem>() {
             override fun areItemsTheSame(
-                oldItem: ListProjectTasksItem,
-                newItem: ListProjectTasksItem,
+                oldItem: ListAllTasksItem,
+                newItem: ListAllTasksItem,
             ): Boolean {
                 return oldItem == newItem
             }
 
             override fun areContentsTheSame(
-                oldItem: ListProjectTasksItem,
-                newItem: ListProjectTasksItem,
+                oldItem: ListAllTasksItem,
+                newItem: ListAllTasksItem,
             ): Boolean {
                 return oldItem == newItem
             }
@@ -80,6 +80,6 @@ class ProjectTasksAdapter :
     }
 
     interface OnItemClickCallback {
-        fun onItemClicked(data: ListProjectTasksItem)
+        fun onItemClicked(data: ListAllTasksItem)
     }
 }

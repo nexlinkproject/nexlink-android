@@ -29,7 +29,7 @@ data class ListAllTasksItem(
 	val endDate: String? = null,
 
 	@field:SerializedName("ProjectId")
-	val projectId: Int? = null,
+	val projectId: String? = null,
 
 	@field:SerializedName("description")
 	val description: String? = null,
@@ -37,8 +37,8 @@ data class ListAllTasksItem(
 	@field:SerializedName("id")
 	val id: String? = null,
 
-	@field:SerializedName("title")
-	val title: String? = null,
+	@field:SerializedName("name")
+	val name: String? = null,
 
 	@field:SerializedName("startDate")
 	val startDate: String? = null,
@@ -48,6 +48,9 @@ data class ListAllTasksItem(
 
 	@field:SerializedName("status")
 	val status: String? = null,
+
+	@field:SerializedName("priority")
+	val priority: String? = null,
 
 	@field:SerializedName("updatedAt")
 	val updatedAt: String? = null

@@ -250,7 +250,7 @@ class AddTeammatesAndTaskActivity : AppCompatActivity() {
     private fun loadTeammates() {
         val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
         if (projectId != null) {
-            projectsViewModel.getProjecUsers(projectId).observe(this) { result ->
+            projectsViewModel.getProjectUsers(projectId).observe(this) { result ->
                 when (result) {
                     is ResultState.Loading -> {}
                     is ResultState.Success -> {

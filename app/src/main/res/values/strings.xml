@@ -83,4 +83,5 @@
     <string name="txt_projects_not_found">No Data Projects Found, Please Add New Project</string>
     <string name="txt_add_user_task">Add User Task</string>
     <string name="txt_user_have_not_been_added_yet">User have not been added yet</string>
+    <string name="txt_tasks_not_found">No Data Tasks Found, Please Add Task First</string>
 </resources>

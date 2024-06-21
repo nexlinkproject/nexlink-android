@@ -15,7 +15,9 @@ import com.nexlink.nexlinkmobileapp.data.remote.response.projects.ListAllProject
 import com.nexlink.nexlinkmobileapp.databinding.FragmentProjectsBinding
 import com.nexlink.nexlinkmobileapp.view.adapter.DateAdapter
 import com.nexlink.nexlinkmobileapp.view.adapter.ProjectsAdapter
+import com.nexlink.nexlinkmobileapp.view.factory.AuthModelFactory
 import com.nexlink.nexlinkmobileapp.view.factory.ProjectsModelFactory
+import com.nexlink.nexlinkmobileapp.view.ui.auth.AuthViewModel
 import com.nexlink.nexlinkmobileapp.view.ui.projects.crud.CreateProjectActivity
 import com.nexlink.nexlinkmobileapp.view.ui.projects.crud.DetailProjectActivity
 import java.text.SimpleDateFormat
@@ -29,8 +31,16 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
         ProjectsModelFactory.getInstance(requireContext())
     }
 
+    private val authViewModel by viewModels<AuthViewModel> {
+        AuthModelFactory.getInstance(requireContext())
+    }
+
     private var _binding: FragmentProjectsBinding? = null
     private val binding get() = _binding!!
+
+    private var user_id: String? = null
+    private var filter_status: String? = null
+    private var filter_date: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,14 +63,25 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
             startActivity(intent)
         }
 
+        setUpProjectMenu()
+
         // Toggle buttons untuk langsung menampilkan semua project
         binding.btnGroupProjectFilter.check(binding.btnAllProject.id)
         binding.btnGroupProjectFilter.addOnButtonCheckedListener { group, checkedId, isChecked ->
             if (isChecked) {
                 when (checkedId) {
-                    binding.btnAllProject.id -> getAllProjects()
-                    binding.btnInProgress.id -> filterProjects("in-progress")
-                    binding.btnDone.id -> filterProjects("completed")
+                    binding.btnAllProject.id -> {
+                        filter_status = null
+                        getProjectsByUserId()
+                    }
+                    binding.btnInProgress.id -> {
+                        filter_status = "in-progress"
+                        filterProjects()
+                    }
+                    binding.btnDone.id -> {
+                        filter_status = "completed"
+                        filterProjects()
+                    }
                 }
             }
         }
@@ -68,15 +89,12 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
         // Retry button
         binding.btnRetry.setOnClickListener {
             showTimeout(false)
-            getAllProjects()
+            getProjectsByUserId()
         }
 
         // Setup recycler view
         val layoutManager = LinearLayoutManager(requireContext())
         binding.rvAllProjects.layoutManager = layoutManager
-
-        // Mengambil data project
-        getAllProjects()
 
         return root
     }
@@ -84,7 +102,13 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
     override fun onResume() {
         super.onResume()
         binding.btnGroupProjectFilter.check(binding.btnAllProject.id)
-        getAllProjects()
+        getProjectsByUserId()
+    }
+
+    private fun setUpProjectMenu(){
+        authViewModel.getSession().observe(viewLifecycleOwner) { user ->
+            user_id = user.userId
+        }
     }
 
     private fun getDatesOfMonth(): List<Date> {
@@ -105,8 +129,37 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
         return dates
     }
 
-    private fun getAllProjects(status: String? = null){
-        projectsViewModel.getProjects(status).observe(viewLifecycleOwner) { result ->
+//    private fun getAllProjects(status: String? = null){
+//        projectsViewModel.getProjects(status).observe(viewLifecycleOwner) { result ->
+//            when (result) {
+//                is ResultState.Loading -> {
+//                    showTimeout(false)
+//                    showLoading(true)
+//                }
+//
+//                is ResultState.Success -> {
+//                    showLoading(false)
+//                    showTimeout(false)
+//                    val stories = result.data.data?.projects
+//                    setProjectsData(stories)
+//                }
+//
+//                is ResultState.Error -> {
+//                    showLoading(false)
+//                    if (result.error == "timeout"){
+//                        showTimeout(true)
+//                        showToast("Please check your internet connection")
+//                    }else{
+//                        binding.rvAllProjects.visibility = View.GONE
+//                        binding.tvNoDataProjects.visibility = View.VISIBLE
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+    private fun getProjectsByUserId(status: String? = null, date: String? = null){
+        projectsViewModel.getProjectsByUserId(user_id.toString(), status, date).observe(viewLifecycleOwner) { result ->
             when (result) {
                 is ResultState.Loading -> {
                     showTimeout(false)
@@ -151,13 +204,15 @@ class ProjectsFragment : Fragment(), DateAdapter.OnDateClickListener {
         })
     }
 
-    private fun filterProjects(filter: String, date: Date? = null) {
-        getAllProjects(filter)
+    private fun filterProjects() {
+        println(filter_status)
+        println(filter_date)
+        getProjectsByUserId(filter_status, filter_date)
     }
 
     override fun onDateClick(date: Date) {
-        showToast("Date ${SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date)} clicked")
-//        filterProjects("all", date)
+        filter_date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date)
+        filterProjects()
     }
 
     private fun showSelectedProject(story: ListAllProjectsItem, viewHolder: RecyclerView.ViewHolder) {

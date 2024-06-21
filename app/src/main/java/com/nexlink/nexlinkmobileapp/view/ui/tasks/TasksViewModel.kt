@@ -6,6 +6,8 @@ import com.nexlink.nexlinkmobileapp.data.repository.TasksRepository
 class TasksViewModel(private val repository: TasksRepository) : ViewModel() {
     fun getTaskById(taskId: String) = repository.getTaskById(taskId)
 
+    fun getTasksByUserId(userId: String, status: String? = null, date: String? = null) = repository.getTasksByUserId(userId, status, date)
+
     fun getTaskUser(userId: String) = repository.getTaskUser(userId)
 
     fun createTask(

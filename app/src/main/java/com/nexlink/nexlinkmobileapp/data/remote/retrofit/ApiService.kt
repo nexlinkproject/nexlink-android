@@ -48,15 +48,17 @@ interface ApiService {
     ): SignUpResponse
 
     // ======= PROJECTS ENDPOINTS =======
-    @GET("projects")
+    @GET("projects") // belum dipake
     suspend fun getProjects(
         @Query("status") status: String? = null,
     ): AllProjectsResponse
 
-//    @GET("projects")
-//    suspend fun getProjectsWithUserId(
-//        @Query("status") status: String? = null,
-//    ): AllProjectsResponse
+    @GET("projects/user/{userId}")
+    suspend fun getProjectsByUserId(
+        @Path("userId") userId: String,
+        @Query("status") status: String? = null,
+        @Query("date") date: String? = null,
+    ): AllProjectsResponse
 
     @GET("projects/{projectId}")
     suspend fun getProjectById(
@@ -130,6 +132,13 @@ interface ApiService {
     // ======= TASKS ENDPOINTS =======
     @GET("tasks")
     suspend fun getAllTasks(
+    ): AllTasksResponse
+
+    @GET("tasks/user/{userId}")
+    suspend fun getTasksByUserId(
+        @Path("userId") userId: String,
+        @Query("status") status: String? = null,
+        @Query("date") date: String? = null,
     ): AllTasksResponse
 
     @GET("tasks/{taskId}")

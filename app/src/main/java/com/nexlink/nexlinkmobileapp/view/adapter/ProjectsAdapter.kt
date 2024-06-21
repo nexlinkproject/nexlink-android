@@ -38,7 +38,7 @@ class ProjectsAdapter :
 
         fun bind(project: ListAllProjectsItem) {
             binding.tvProjectName.text = "${project.name}"
-            binding.tvProjectDate.text = formatDate(project.endDate.toString())
+            binding.tvProjectDate.text = formatDate(project.startDate.toString()) + " - " + formatDate(project.endDate.toString())
 
             // Set project status color
             val context = binding.root.context

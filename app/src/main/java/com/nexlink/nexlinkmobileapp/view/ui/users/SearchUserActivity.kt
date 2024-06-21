@@ -241,7 +241,7 @@ class SearchUserActivity : AppCompatActivity() {
     private fun searchUserProject(query: String) {
         val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
         if (projectId != null) {
-            projectViewModel.getProjecUsers(projectId).observe(this) { result ->
+            projectViewModel.getProjectUsers(projectId).observe(this) { result ->
                 when (result) {
                     is ResultState.Loading -> {
                         showLoading(true)
@@ -265,7 +265,7 @@ class SearchUserActivity : AppCompatActivity() {
     private fun loadAllProjectUsers() {
         val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
         if (projectId != null) {
-            projectViewModel.getProjecUsers(projectId).observe(this) { result ->
+            projectViewModel.getProjectUsers(projectId).observe(this) { result ->
                 when (result) {
                     is ResultState.Loading -> {
                         showLoading(true)

@@ -1,5 +1,7 @@
 package com.nexlink.nexlinkmobileapp.view.adapter
 
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -52,6 +54,12 @@ class ListProjectsHomeAdapter :
 
             changeBackgroundColor(binding.viewProjectStatus, color)
             binding.tvProjectStatus.setTextColor(color)
+
+            // Ubah warna stroke background_item_list_projects
+            val background = binding.root.background as LayerDrawable
+            val shapeDrawable = background.getDrawable(0) as GradientDrawable
+            shapeDrawable.setStroke(1, color)
+
             when(project.status) {
                 "in-progress" -> {
                     binding.tvProjectStatus.text = "In Progress"

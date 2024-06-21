@@ -209,7 +209,7 @@ class DetailProjectActivity : AppCompatActivity() {
     }
 
     private fun loadTeammates(projectId: String) {
-        projectsViewModel.getProjecUsers(projectId).observe(this) { result ->
+        projectsViewModel.getProjectUsers(projectId).observe(this) { result ->
             when (result) {
                 is ResultState.Loading -> {}
                 is ResultState.Success -> {
